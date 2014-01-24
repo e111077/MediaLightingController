@@ -1,4 +1,0 @@
-MediaLightingController
-=======================
-
-OSC Lighting Controller
