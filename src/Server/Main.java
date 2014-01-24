@@ -9,7 +9,7 @@ import Client.*;
 
 public class Main {
     
-    public static void main(String[] args) throws SocketException {
-        
+    public static void main(String[] args) {
+        //OSCServer server = new OS
     }
 }
