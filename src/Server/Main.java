@@ -1,15 +1,23 @@
 package Server;
 
-import java.awt.List;
-import java.net.SocketException;
+import java.io.IOException;
 
-import de.sciss.net.*;
+import com.illposed.osc.*;
 
-import Client.*;
 
 public class Main {
     
-    public static void main(String[] args) {
-        //OSCServer server = new OS
+    public static void main(String[] args) throws IOException {
+        int PORT = 5555;
+        
+        OSCPortIn receiver = new OSCPortIn(PORT);
+        MessageListener listener = new MessageListener();
+        receiver.addListener("/1/xy1", listener);
+        receiver.addListener("/2/multifader1", listener);
+        
+        receiver.startListening();
+        Thread listenThread = new Thread(receiver);
+        listenThread.start();
+        System.out.println("Hello");
     }
 }
