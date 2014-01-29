@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
+import com.illposed.osc.OSCPortIn;
 
 public class MessageListener implements OSCListener {
     private final Data database;
@@ -17,31 +18,34 @@ public class MessageListener implements OSCListener {
         Object[] data = message.getArguments();
 
         String[] addressComponents = address.split("/");
+        
+        if (!(data.length != 0 && data[0] != null)) {
+            return;
+        }
 
         if (address.equals("/1/xy1")) {
-            System.out.println(data.getClass());
-            this.database.addPoint((Double[]) data);
+            this.database.addPoint((Float) data[0], (Float) data [1]);
 
-        } else if (address.equals("/2/multifader1")) {
-            int faderNum = 0; 
+        } else if (address.contains("/2/multifader1")) {
+            float faderNum = 0; 
             try {
-                faderNum = Integer.parseInt((String) addressComponents[2]);
+                faderNum = Float.parseFloat((String) addressComponents[3]);
             } catch (Exception e) {
                 System.out.println("There was an error parsing the multifader");
                 e.printStackTrace();
             }
-            this.database.addFaderDatum(faderNum, (double) data[0]);
+            this.database.addFaderDatum(faderNum, (Float) data[0]);
 
         } else if (address.equals("/1/toggle1")) {
-            if ((Integer) data[0] == 1) {
+            if ((Float) data[0] == 1f) {
                 this.database.start();
 
             } else {
                 this.database.stop(true);
 
             }
-        } else if (address.equals("/1/toggle1")) {
-            if ((Integer) data[0] == 1) {
+        } else if (address.equals("/2/toggle1")) {
+            if ((Float) data[0] == 1f) {
                 this.database.start();
 
             } else {

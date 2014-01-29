@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Data {
     private boolean recording = false;
-    private ArrayList<double[]> faderData = new ArrayList<double[]>();
-    private ArrayList<double[]> axesData = new ArrayList<double[]>();
-    private ArrayList<ArrayList<double[]>> previousCollections = new ArrayList<ArrayList<double[]>>();
-    private Double initTime = null;
+    private ArrayList<Float[]> faderData = new ArrayList<Float[]>();
+    private ArrayList<Float[]> axesData = new ArrayList<Float[]>();
+    private ArrayList<ArrayList<Float[]>> previousCollections = new ArrayList<ArrayList<Float[]>>();
+    private Float initTime = null;
 
     /**
      * Begins storing data into the arrays
@@ -27,28 +27,28 @@ public class Data {
     public void stop(boolean axes) {
         recording = false;
 
-        ArrayList<double[]> clone = new ArrayList<double[]>();
+        ArrayList<Float[]> clone = new ArrayList<Float[]>();
 
         if (axes) {
             try {
-                clone = (ArrayList<double[]>) axesData.clone();
+                clone = (ArrayList<Float[]>) axesData.clone();
             } catch (Exception e) {
                 System.out.println("There was an error in cloning");
                 e.printStackTrace();
             }
 
             previousCollections.add(clone);
-            axesData = new ArrayList<double[]>();
+            axesData = new ArrayList<Float[]>();
         } else {
             try {
-                clone = (ArrayList<double[]>) faderData.clone();
+                clone = (ArrayList<Float[]>) faderData.clone();
             } catch (Exception e) {
                 System.out.println("There was an error in cloning");
                 e.printStackTrace();
             }
 
             previousCollections.add(clone);
-            faderData = new ArrayList<double[]>();
+            faderData = new ArrayList<Float[]>();
         }
         
         printall();
@@ -62,13 +62,13 @@ public class Data {
      *            Array representing a coordinate such as (1,2) would be
      *            represented as {1.0, 2.0} only two dimensions supported
      */
-    public void addPoint(Double[] data) {
+    public void addPoint(Float x, Float y) {
         if (!recording)
             return;
 
-        double elapsedTime = firstCheck();
+        float elapsedTime = firstCheck();
 
-        axesData.add(new double[] { elapsedTime, data[0], data[1] });
+        axesData.add(new Float[] { elapsedTime, x, y });
     }
 
     /**
@@ -79,15 +79,15 @@ public class Data {
      *            address as: /pageNumber/faderName/faderNumber
      * 
      * @param faderValue
-     *            This is the value of the fader as a double value
+     *            This is the value of the fader as a Float value
      */
-    public void addFaderDatum(int faderNumber, double faderValue) {
+    public void addFaderDatum(float faderNumber, Float faderValue) {
         if (!recording)
             return;
 
-        double elapsedTime = firstCheck();
+        Float elapsedTime = firstCheck();
 
-        faderData.add(new double[] { elapsedTime, faderNumber, faderValue });
+        faderData.add(new Float[] { elapsedTime, faderNumber, faderValue });
     }
 
     /**
@@ -95,22 +95,22 @@ public class Data {
      * 
      * @return The elapsed time
      */
-    private double firstCheck() {
+    private float firstCheck() {
         if (initTime == null) {
-            initTime = (double) System.currentTimeMillis();
+            initTime = (float) System.currentTimeMillis();
         }
 
-        return (double) (System.currentTimeMillis() - initTime);
+        return (float) (System.currentTimeMillis() - initTime);
     }
 
     private void printall() {
         for (int i = 0; i < previousCollections.size(); i++) {
-            ArrayList<double[]> collection = previousCollections.get(i);
+            ArrayList<Float[]> collection = previousCollections.get(i);
             if (collection.size() == 0)
                 break;
             
             for (int j = 0; j < collection.size(); j++) {
-                double[] data = collection.get(j);
+                Float[] data = collection.get(j);
                 String output = "";
                 
                 for (int k = 0; k < data.length; k++) {
