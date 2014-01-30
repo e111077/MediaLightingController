@@ -1,6 +1,11 @@
 package Server;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.swing.JFileChooser;
 
 /**
  * This class acts as a database that stores the points and data and time. It
@@ -16,7 +21,8 @@ public class Data {
     private ArrayList<Float[]> faderData = new ArrayList<Float[]>();
     private ArrayList<Float[]> axesData = new ArrayList<Float[]>();
     // Array list of older datasets
-    private ArrayList<ArrayList<Float[]>> previousCollections = new ArrayList<ArrayList<Float[]>>();
+    private ArrayList<ArrayList<Float[]>> previousAxes = new ArrayList<ArrayList<Float[]>>();
+    private ArrayList<ArrayList<Float[]>> previousFader = new ArrayList<ArrayList<Float[]>>();
     // Initial time in seconds since record button was pressed.
     private Long initTime = null;
 
@@ -53,7 +59,7 @@ public class Data {
                 e.printStackTrace();
             }
 
-            previousCollections.add(clone);
+            previousAxes.add(clone);
             // Clears the axes data array
             axesData = new ArrayList<Float[]>();
 
@@ -67,16 +73,23 @@ public class Data {
                 e.printStackTrace();
             }
 
-            previousCollections.add(clone);
+            previousFader.add(clone);
             // Clears the fader data array
             faderData = new ArrayList<Float[]>();
         }
 
         // Prints everything for debugging
         // TODO: REMOVE AFTER DEBUGGING IS FINISHED
-        printall();
+        // printall();
         // Resets the initTime
         initTime = null;
+
+        // TODO: REMOVE AFTER DEBUGGING IS FINISHED
+        try {
+            exportCSV();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -140,25 +153,113 @@ public class Data {
 
     // PRINTS EVERYTHING
     // TODO: REMOVE AFTER DEBUGGING
-    private void printall() {
-        for (int i = 0; i < previousCollections.size(); i++) {
-            ArrayList<Float[]> collection = previousCollections.get(i);
-            if (collection.size() == 0)
+    // private void printall() {
+    // for (int i = 0; i < previousCollections.size(); i++) {
+    // ArrayList<Float[]> collection = previousCollections.get(i);
+    // if (collection.size() == 0)
+    // break;
+    //
+    // for (int j = 0; j < collection.size(); j++) {
+    // Float[] data = collection.get(j);
+    // String output = "";
+    //
+    // for (int k = 0; k < data.length; k++) {
+    // output += data[k] + "\t";
+    // }
+    // System.out.println(output += "\n");
+    // }
+    // }
+    // }
+
+    /**
+     * Exports all of the data stored and exports them into .csv files delimited
+     * only by commas (As opposed to spaces and semicolons). Separates each test
+     * into its own file with a label of what type of test it was and what
+     * number of that type of test it is.
+     * 
+     * @throws IOException
+     *             Throws due to an IOException from the FileWriter
+     */
+    public void exportCSV() throws IOException {
+        String fileLocation = saveFileChooser();
+        String fileLocationPrefix = fileLocation.substring(0,
+                fileLocation.length() - 4);
+
+        for (int i = 0; i < previousAxes.size(); i++) {
+            if (previousAxes.size() == 0)
                 break;
 
-            for (int j = 0; j < collection.size(); j++) {
-                Float[] data = collection.get(j);
-                String output = "";
+            FileWriter writer = new FileWriter(fileLocationPrefix + "Axis" + i
+                    + ".csv");
+            writer.append("Time (seconds),X Coordinate,Y Coordinate\n");
+            ArrayList<Float[]> previousAxis = previousAxes.get(i);
 
-                for (int k = 0; k < data.length; k++) {
-                    output += data[k] + "\t";
-                }
-                System.out.println(output += "\n");
+            for (int j = 1; j < previousAxis.size(); j++) {
+                Float time = previousAxis.get(j)[0];
+                Float xAxis = previousAxis.get(j)[1];
+                Float yAxis = previousAxis.get(j)[2];
+
+                writer.append("" + time + "," + xAxis + "," + yAxis + "\n");
             }
+
+            writer.flush();
+            writer.close();
+        }
+
+        for (int i = 0; i < previousFader.size(); i++) {
+            if (previousFader.size() == 0)
+                break;
+
+            FileWriter writer = new FileWriter(fileLocationPrefix + "Fader" + i
+                    + ".csv");
+            writer.append("Time (seconds),Fader,Value\n");
+            ArrayList<Float[]> previousAxis = previousFader.get(i);
+
+            for (int j = 1; j < previousAxis.size(); j++) {
+                Float time = previousAxis.get(j)[0];
+                Float fader = previousAxis.get(j)[1];
+                Float value = previousAxis.get(j)[2];
+
+                writer.append("" + time + "," + fader + "," + value + "\n");
+            }
+
+            writer.flush();
+            writer.close();
         }
     }
 
-    public void exportCSV() {
-        // TODO: Export all data to CSV
+    /**
+     * This opens a JFileChooser to select the location of where to save the
+     * CSV. It also appends .csv to the filename if it is not already present.
+     * 
+     * @return the filepath in which we want to save the canvas image with
+     *         ".csv" appended to the end
+     */
+    private String saveFileChooser() {
+        // Creates the File Chooser
+        JFileChooser chooser = new JFileChooser();
+
+        // sets the default file name
+        chooser.setSelectedFile(new File("dataExport.csv"));
+
+        // Displays the chooser
+        int returnedInt = chooser.showSaveDialog(null);
+
+        // If a file is selected, return the string of the filepath
+        if (returnedInt == JFileChooser.APPROVE_OPTION) {
+            // finds the absolute path of the location
+            String path = chooser.getSelectedFile().getAbsolutePath();
+
+            // if it does not end with .csv, it sets it to end with .csv
+            if (!path.endsWith(".csv")) {
+                return path + ".csv";
+            }
+
+            // returns the path
+            return path;
+        }
+
+        // returns null if exited
+        return null;
     }
 }
