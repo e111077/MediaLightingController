@@ -24,7 +24,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.GroupLayout.Group;
 import javax.swing.table.DefaultTableModel;
 
-public class Gui extends JPanel{
+import Server.Data;
+
+public class Gui extends JPanel implements Runnable{
 	private final JButton button1;
 	private final JTextField text1;
 	private final JTextField text2;
@@ -47,10 +49,14 @@ public class Gui extends JPanel{
 	private final Group tab2row2;
 	private final Group tab2vert1;
 	private final Group tab2vert2;
+	
+	private final Data database;
 
-	public Gui(){
+	public Gui(Data database){
 		super(new GridLayout(1, 1));//not too sure what this does...
 		JTabbedPane tabbedPane = new JTabbedPane();
+		
+		this.database = database;
 	
 		//-----------------------------1st Tab-----------------------------------
 		//Instantiate components
@@ -172,24 +178,25 @@ public class Gui extends JPanel{
      * this method should be invoked from
      * the event dispatch thread.
      */
-    private static void createAndShowGUI() {
+    private void createAndShowGUI() {
         //Create and set up the window.
         JFrame frame = new JFrame("GUI Window Name Here");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //Add content to the window.
-        frame.add(new Gui(), BorderLayout.CENTER);
+        frame.add(this, BorderLayout.CENTER);
         
         //Display the window.
         frame.pack();
         frame.setVisible(true);
     }
 
-	public static void main(final String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				createAndShowGUI();
-			}
-		});
-	}
+    @Override
+    public void run() {
+        // TODO Auto-generated method stub
+        createAndShowGUI();
+    }
+    
+    
+
 }

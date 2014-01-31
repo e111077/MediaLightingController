@@ -181,48 +181,74 @@ public class Data {
      *             Throws due to an IOException from the FileWriter
      */
     public void exportCSV() throws IOException {
+        // gets the save location
         String fileLocation = saveFileChooser();
+        // gets the prefix of the save location
         String fileLocationPrefix = fileLocation.substring(0,
                 fileLocation.length() - 4);
 
+        // iterates through the axes
         for (int i = 0; i < previousAxes.size(); i++) {
+            // breaks if there are no previous axes
             if (previousAxes.size() == 0)
                 break;
 
+            // opens a file writer and appends the word "axis" the number of the
+            // test and ".csv"
             FileWriter writer = new FileWriter(fileLocationPrefix + "Axis" + i
                     + ".csv");
+            
+            // creates the column titles
             writer.append("Time (seconds),X Coordinate,Y Coordinate\n");
+            
+            // gets the indexed axis
             ArrayList<Float[]> previousAxis = previousAxes.get(i);
 
+            // iterates through each value in each test
             for (int j = 1; j < previousAxis.size(); j++) {
+                // gets each attribute in the stored data
                 Float time = previousAxis.get(j)[0];
                 Float xAxis = previousAxis.get(j)[1];
                 Float yAxis = previousAxis.get(j)[2];
 
+                // writes in csv format
                 writer.append("" + time + "," + xAxis + "," + yAxis + "\n");
             }
 
+            // cleans up after the writer
             writer.flush();
             writer.close();
         }
 
+        // iterates through the axes
         for (int i = 0; i < previousFader.size(); i++) {
+            // breaks if there are no previous faders
             if (previousFader.size() == 0)
                 break;
 
+            // opens a file writer and appends the word "fader" the number of the
+            // test and ".csv"
             FileWriter writer = new FileWriter(fileLocationPrefix + "Fader" + i
                     + ".csv");
+            
+            // creates the column titles
             writer.append("Time (seconds),Fader,Value\n");
+            
+            // gets the indexed fader
             ArrayList<Float[]> previousAxis = previousFader.get(i);
 
+            // iterates through each value in each test
             for (int j = 1; j < previousAxis.size(); j++) {
+                // gets each attribute in the stored data
                 Float time = previousAxis.get(j)[0];
                 Float fader = previousAxis.get(j)[1];
                 Float value = previousAxis.get(j)[2];
 
+                // writes in csv format
                 writer.append("" + time + "," + fader + "," + value + "\n");
             }
 
+            // cleans up after the writer
             writer.flush();
             writer.close();
         }

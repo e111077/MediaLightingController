@@ -2,6 +2,10 @@ package Server;
 
 import java.io.IOException;
 
+import javax.swing.SwingUtilities;
+
+import GUI.Gui;
+
 import com.illposed.osc.*;
 
 /**
@@ -39,5 +43,10 @@ public class Main {
         Thread listenThread = new Thread(receiver);
         // starts the listening thread
         listenThread.start();
+        
+        // creates and runs the gui
+        Gui gui = new Gui(database);
+        
+        SwingUtilities.invokeLater(gui);
     }
 }
