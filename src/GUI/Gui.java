@@ -27,12 +27,26 @@ import javax.swing.table.DefaultTableModel;
 import Server.Data;
 
 public class Gui extends JPanel implements Runnable{
-	private final JButton button1;
-	private final JTextField text1;
-	private final JTextField text2;
+	private final JButton tab1button1;
+	private final JTextField tab1text1; //Test subject
+	private final JTextField tab1text2; //Test number
+	private final JTextField tab1text3; //IP Address
+	
+	private final JButton tab2button1;
+	private final JTextField tab2text1; //Test subject
+	private final JTextField tab2text2; //Test number
+	private final JTextField tab2text3; //IP Address
+	
+	private final JLabel tab1label1; //Test subject
+	private final JLabel tab1label2; //Test number
+	private final JLabel tab1label3; //IP Address
+	
+	private final JLabel tab2label1; //Test subject
+	private final JLabel tab2label2; //Test number
+	private final JLabel tab2label3; //IP Address
 
-	private final DefaultTableModel tableModel1;
-	private final DefaultTableModel tableModel2;
+	public final DefaultTableModel tableModel1; //X,Y table
+	public final DefaultTableModel tableModel2; //Bar table
 	private final JTable dataTable1;
 	private final JTable dataTable2;
 
@@ -43,7 +57,9 @@ public class Gui extends JPanel implements Runnable{
 	private final Group vertical2;
 
 	private final Group tab1row1;
+	private final Group tab1row2;
 	private final Group tab1vert1;
+	private final Group tab1vert2;
 	
 	private final Group tab2row1;
 	private final Group tab2row2;
@@ -60,6 +76,21 @@ public class Gui extends JPanel implements Runnable{
 	
 		//-----------------------------1st Tab-----------------------------------
 		//Instantiate components
+		tab1button1 = new JButton();
+		tab1button1.setName("tab1button1");
+		tab1button1.setText("Submit");
+		tab1label1 = new JLabel(); //Note: Labels are reused in second tab
+		tab1label1.setText("Test Subject: ");
+		tab1label2 = new JLabel();
+		tab1label2.setText("Test Number: ");
+		tab1label3 = new JLabel();
+		tab1label3.setText("IP Address: ");
+		tab1text1 = new JTextField(60); //Test subject
+		tab1text1.setName("text1");
+		tab1text2 = new JTextField(60); //Test number
+		tab1text2.setName("text2");
+		tab1text3 = new JTextField(60); //IP Address
+		tab1text3.setName("text2");
 		dataTable1 = new JTable(0,3);
 		dataTable1.setName("dataTable1");
 		tableModel1 = (DefaultTableModel) dataTable1.getModel();
@@ -73,36 +104,64 @@ public class Gui extends JPanel implements Runnable{
 		
 		//Arrange horizontal
 		tab1row1 = layout1.createSequentialGroup();
-		tab1row1.addComponent(dataTable1);
+		tab1row1.addComponent(tab1label1);
+		tab1row1.addComponent(tab1text1);
+		tab1row1.addComponent(tab1label2);
+		tab1row1.addComponent(tab1text2);
+		tab1row1.addComponent(tab1label3);
+		tab1row1.addComponent(tab1text3);
+		tab1row1.addComponent(tab1button1);
+		
+		tab1row2 = layout1.createSequentialGroup();
+		tab1row2.addComponent(dataTable1);
 
 		horizontal1 = layout1.createParallelGroup();
 		horizontal1.addGroup(tab1row1);
+		horizontal1.addGroup(tab1row2);
 		layout1.setHorizontalGroup(horizontal1);
 
 		//Arrange vertical
 		tab1vert1 = layout1.createParallelGroup(BASELINE);
-		tab1vert1.addComponent(dataTable1);
+		tab1vert1.addComponent(tab1label1);
+		tab1vert1.addComponent(tab1text1);
+		tab1vert1.addComponent(tab1label2);
+		tab1vert1.addComponent(tab1text2);
+		tab1vert1.addComponent(tab1label3);
+		tab1vert1.addComponent(tab1text3);
+		tab1vert1.addComponent(tab1button1);
+		
+		tab1vert2 = layout1.createParallelGroup(BASELINE);
+		tab1vert2.addComponent(dataTable1);
 
 		vertical1 = layout1.createSequentialGroup();
 		vertical1.addGroup(tab1vert1);
+		vertical1.addGroup(tab1vert2);
 		layout1.setVerticalGroup(vertical1);
 
 		//Add Title Row to Table
 		String [] rowData = new String[3];
 		rowData[0] = "Time";
-		rowData[1] = "Person";
-		rowData[2] = "More info";
+		rowData[1] = "X";
+		rowData[2] = "Y";
 		tableModel1.addRow(rowData);
 		
 		//-----------------------------2nd Tab-----------------------------------
 		//instantiating components
-		button1 = new JButton();
-		button1.setName("button1");
-		button1.setText("Generic Button");
-		text1 = new JTextField(60);
-		text1.setName("text1");
-		text2 = new JTextField(60);
-		text2.setName("text2");
+		tab2button1 = new JButton();
+		tab2button1.setName("tab2button1");
+		tab2button1.setText("Submit");
+		tab2label1 = new JLabel(); //Note: Labels are reused in second tab
+		tab2label1.setText("Test Subject: ");
+		tab2label2 = new JLabel();
+		tab2label2.setText("Test Number: ");
+		tab2label3 = new JLabel();
+		tab2label3.setText("IP Address: ");
+		tab2text1 = new JTextField(60); //Test subject
+		tab2text1.setName("text1");
+		tab2text2 = new JTextField(60); //Test number
+		tab2text2.setName("text2");
+		tab2text3 = new JTextField(60); //IP Address
+		tab2text3.setName("text2");
 		dataTable2 = new JTable(0,3);
 		dataTable2.setName("dataTable2");
 		tableModel2 = (DefaultTableModel) dataTable2.getModel();
@@ -116,9 +175,13 @@ public class Gui extends JPanel implements Runnable{
 		
 		//Arrange horizontal
 		tab2row1 = layout2.createSequentialGroup();
-		tab2row1.addComponent(text1);
-		tab2row1.addComponent(text2);
-		tab2row1.addComponent(button1);
+		tab2row1.addComponent(tab2label1);
+		tab2row1.addComponent(tab2text1);
+		tab2row1.addComponent(tab2label2);
+		tab2row1.addComponent(tab2text2);
+		tab2row1.addComponent(tab2label3);
+		tab2row1.addComponent(tab2text3);
+		tab2row1.addComponent(tab2button1);
 		
 		tab2row2 = layout2.createSequentialGroup();
 		tab2row2.addComponent(dataTable2);
@@ -130,9 +193,13 @@ public class Gui extends JPanel implements Runnable{
 
 		//Arrange vertical
 		tab2vert1 = layout2.createParallelGroup(BASELINE);
-		tab2vert1.addComponent(text1);
-		tab2vert1.addComponent(text2);
-		tab2vert1.addComponent(button1);
+		tab2vert1.addComponent(tab2label1);
+		tab2vert1.addComponent(tab2text1);
+		tab2vert1.addComponent(tab2label2);
+		tab2vert1.addComponent(tab2text2);
+		tab2vert1.addComponent(tab2label3);
+		tab2vert1.addComponent(tab2text3);
+		tab2vert1.addComponent(tab2button1);
 		
 		tab2vert2 = layout2.createParallelGroup(BASELINE);
 		tab2vert2.addComponent(dataTable2);
@@ -144,10 +211,10 @@ public class Gui extends JPanel implements Runnable{
 
 		//Add Title Row to Table
 		String [] rowData2 = new String[3];
-		rowData[0] = "Time";
-		rowData[1] = "Person";
-		rowData[2] = "More info";
-		tableModel2.addRow(rowData);
+		rowData2[0] = "Time";
+		rowData2[1] = "Bar Number";
+		rowData2[2] = "Value";
+		tableModel2.addRow(rowData2);
 		
 		/////////////////////////////
         
@@ -180,7 +247,7 @@ public class Gui extends JPanel implements Runnable{
      */
     private void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("GUI Window Name Here");
+        JFrame frame = new JFrame("MIT Media Lab: Responsive Environments Group");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //Add content to the window.
@@ -197,6 +264,11 @@ public class Gui extends JPanel implements Runnable{
         createAndShowGUI();
     }
     
-    
+//    public static void main(String[] args) throws IOException {
+//    	// creates and runs the gui
+//        Gui gui = new Gui(database);
+//        
+//        SwingUtilities.invokeLater(gui);
+//    }
 
 }
