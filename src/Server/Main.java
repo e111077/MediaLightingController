@@ -1,6 +1,7 @@
 package Server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 import javax.swing.SwingUtilities;
 
@@ -48,5 +49,15 @@ public class Main {
         Gui gui = new Gui(database);
         
         SwingUtilities.invokeLater(gui);
+        
+        OSCPortOut sender = new OSCPortOut(InetAddress.getByName("18.189.19.208"), 9000);
+        Object[] arg = new Object[1];
+        arg[0] = new Integer(1);
+        OSCMessage msg = new OSCMessage("/1/led1", arg);
+        try {
+            sender.send(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
