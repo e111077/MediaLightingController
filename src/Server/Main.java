@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import javax.swing.SwingUtilities;
 
 import GUI.Gui;
+import GUI.GuiModel;
 
 import com.illposed.osc.*;
 
@@ -22,10 +23,14 @@ public class Main {
         // sets the port in which data is collected
         int PORT = 5555;
 
+        // creates and runs the gui
+        Gui gui = new Gui();
+        
         // Instantiates the receiver on the specific port
         OSCPortIn receiver = new OSCPortIn(PORT);
         // Instantiates the database
-        Data database = new Data();
+        Data database = new Data(gui);
+        GuiModel.setDatabase(database);
         // Instantiates the listener which calls the database object
         MessageListener listener = new MessageListener(database);
 
@@ -37,7 +42,7 @@ public class Main {
         receiver.addListener("/2/multifader1/4", listener);
         receiver.addListener("/1/toggle1", listener);
         receiver.addListener("/2/toggle1", listener);
-
+        
         // begins listening
         receiver.startListening();
         // creates a thread pointing to the receiver's runnable file
@@ -45,19 +50,16 @@ public class Main {
         // starts the listening thread
         listenThread.start();
         
-        // creates and runs the gui
-        Gui gui = new Gui(database);
-        
         SwingUtilities.invokeLater(gui);
         
-        OSCPortOut sender = new OSCPortOut(InetAddress.getByName("18.189.19.208"), 9000);
-        Object[] arg = new Object[1];
-        arg[0] = new Integer(1);
-        OSCMessage msg = new OSCMessage("/1/led1", arg);
-        try {
-            sender.send(msg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        OSCPortOut sender = new OSCPortOut(InetAddress.getByName("18.189.19.208"), 9000);
+//        Object[] arg = new Object[1];
+//        arg[0] = new Integer(1);
+//        OSCMessage msg = new OSCMessage("/1/led1", arg);
+//        try {
+//            sender.send(msg);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

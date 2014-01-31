@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
 
+import GUI.Gui;
+import GUI.GuiModel;
+
 /**
  * This class acts as a database that stores the points and data and time. It
  * also has the ability to export all of the data into a CSV.
@@ -18,13 +21,22 @@ public class Data {
     // Recording boolean
     private boolean recording = false;
     // Live data arrays from fader and axes
-    private ArrayList<Float[]> faderData = new ArrayList<Float[]>();
-    private ArrayList<Float[]> axesData = new ArrayList<Float[]>();
+    private ArrayList<Object[]> faderData = new ArrayList<Object[]>();
+    private ArrayList<Object[]> axesData = new ArrayList<Object[]>();
     // Array list of older datasets
-    private ArrayList<ArrayList<Float[]>> previousAxes = new ArrayList<ArrayList<Float[]>>();
-    private ArrayList<ArrayList<Float[]>> previousFader = new ArrayList<ArrayList<Float[]>>();
+    private ArrayList<ArrayList<Object[]>> previousAxes = new ArrayList<ArrayList<Object[]>>();
+    private ArrayList<ArrayList<Object[]>> previousFader = new ArrayList<ArrayList<Object[]>>();
     // Initial time in seconds since record button was pressed.
     private Long initTime = null;
+    // Gui to be edited
+    private final Gui gui;
+
+    private String user = "";
+    private String testNumber = "";
+
+    public Data(Gui gui) {
+        this.gui = gui;
+    }
 
     /**
      * Begins storing data into the arrays
@@ -47,13 +59,13 @@ public class Data {
         recording = false;
 
         // Initializes the clone
-        ArrayList<Float[]> clone = new ArrayList<Float[]>();
+        ArrayList<Object[]> clone = new ArrayList<Object[]>();
 
         // Clones the axes data and adds it to the previous collections
         // ArrayList
         if (axes) {
             try {
-                clone = (ArrayList<Float[]>) axesData.clone();
+                clone = (ArrayList<Object[]>) axesData.clone();
             } catch (Exception e) {
                 System.out.println("There was an error in cloning");
                 e.printStackTrace();
@@ -61,13 +73,13 @@ public class Data {
 
             previousAxes.add(clone);
             // Clears the axes data array
-            axesData = new ArrayList<Float[]>();
+            axesData = new ArrayList<Object[]>();
 
             // Clones the fader data and adds it to the previous collections
             // ArrayList
         } else {
             try {
-                clone = (ArrayList<Float[]>) faderData.clone();
+                clone = (ArrayList<Object[]>) faderData.clone();
             } catch (Exception e) {
                 System.out.println("There was an error in cloning");
                 e.printStackTrace();
@@ -75,21 +87,22 @@ public class Data {
 
             previousFader.add(clone);
             // Clears the fader data array
-            faderData = new ArrayList<Float[]>();
+            faderData = new ArrayList<Object[]>();
+
         }
 
-        // Prints everything for debugging
-        // TODO: REMOVE AFTER DEBUGGING IS FINISHED
-        // printall();
+        GuiModel.turnOffLED(axes);
+        GuiModel.enableButtons(this.gui, axes);
+
         // Resets the initTime
         initTime = null;
 
         // TODO: REMOVE AFTER DEBUGGING IS FINISHED
-        try {
-            exportCSV();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // try {
+        // exportCSV();
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // }
     }
 
     /**
@@ -108,7 +121,10 @@ public class Data {
         float elapsedTime = firstCheck();
 
         // Adds the appropriate data into the axes ArrayList
-        axesData.add(new Float[] { elapsedTime, x, y });
+        axesData.add(new Object[] { elapsedTime, x, y, user, testNumber });
+
+        // adds to the row
+        GuiModel.updateAxes(this.gui, elapsedTime, x, y);
     }
 
     /**
@@ -130,7 +146,10 @@ public class Data {
         float elapsedTime = firstCheck();
 
         // Adds the appropriate data into the fader ArrayList
-        faderData.add(new Float[] { elapsedTime, faderNumber, faderValue });
+        faderData.add(new Object[] { elapsedTime, faderNumber, faderValue,
+                user, testNumber });
+
+        GuiModel.updateFader(this.gui, elapsedTime, faderNumber, faderValue);
     }
 
     /**
@@ -150,26 +169,6 @@ public class Data {
         // returns the correct elapsed time if it clocks over 1000000ms
         return elapsed > 0 ? elapsed : elapsed + 1000;
     }
-
-    // PRINTS EVERYTHING
-    // TODO: REMOVE AFTER DEBUGGING
-    // private void printall() {
-    // for (int i = 0; i < previousCollections.size(); i++) {
-    // ArrayList<Float[]> collection = previousCollections.get(i);
-    // if (collection.size() == 0)
-    // break;
-    //
-    // for (int j = 0; j < collection.size(); j++) {
-    // Float[] data = collection.get(j);
-    // String output = "";
-    //
-    // for (int k = 0; k < data.length; k++) {
-    // output += data[k] + "\t";
-    // }
-    // System.out.println(output += "\n");
-    // }
-    // }
-    // }
 
     /**
      * Exports all of the data stored and exports them into .csv files delimited
@@ -197,22 +196,25 @@ public class Data {
             // test and ".csv"
             FileWriter writer = new FileWriter(fileLocationPrefix + "Axis" + i
                     + ".csv");
-            
+
             // creates the column titles
-            writer.append("Time (seconds),X Coordinate,Y Coordinate\n");
-            
+            writer.append("Time (seconds),X Coordinate,Y Coordinate,Test Subject,Test Number\n");
+
             // gets the indexed axis
-            ArrayList<Float[]> previousAxis = previousAxes.get(i);
+            ArrayList<Object[]> previousAxis = previousAxes.get(i);
 
             // iterates through each value in each test
             for (int j = 1; j < previousAxis.size(); j++) {
                 // gets each attribute in the stored data
-                Float time = previousAxis.get(j)[0];
-                Float xAxis = previousAxis.get(j)[1];
-                Float yAxis = previousAxis.get(j)[2];
+                Float time = (Float) previousAxis.get(j)[0];
+                Float xAxis = (Float) previousAxis.get(j)[1];
+                Float yAxis = (Float) previousAxis.get(j)[2];
+                String username = (String) previousAxis.get(j)[3];
+                String testNumb = (String) previousAxis.get(j)[4];
 
                 // writes in csv format
-                writer.append("" + time + "," + xAxis + "," + yAxis + "\n");
+                writer.append("" + time + "," + xAxis + "," + yAxis + ","
+                        + username + "," + testNumb + "\n");
             }
 
             // cleans up after the writer
@@ -226,26 +228,30 @@ public class Data {
             if (previousFader.size() == 0)
                 break;
 
-            // opens a file writer and appends the word "fader" the number of the
+            // opens a file writer and appends the word "fader" the number of
+            // the
             // test and ".csv"
             FileWriter writer = new FileWriter(fileLocationPrefix + "Fader" + i
                     + ".csv");
-            
+
             // creates the column titles
-            writer.append("Time (seconds),Fader,Value\n");
-            
+            writer.append("Time (seconds),Fader,Value,Test Subject,Test Number\n");
+
             // gets the indexed fader
-            ArrayList<Float[]> previousAxis = previousFader.get(i);
+            ArrayList<Object[]> previousAxis = previousFader.get(i);
 
             // iterates through each value in each test
             for (int j = 1; j < previousAxis.size(); j++) {
                 // gets each attribute in the stored data
-                Float time = previousAxis.get(j)[0];
-                Float fader = previousAxis.get(j)[1];
-                Float value = previousAxis.get(j)[2];
+                Float time = (Float) previousAxis.get(j)[0];
+                Float fader = (Float) previousAxis.get(j)[1];
+                Float value = (Float) previousAxis.get(j)[2];
+                String username = (String) previousAxis.get(j)[3];
+                String testNumb = (String) previousAxis.get(j)[4];
 
                 // writes in csv format
-                writer.append("" + time + "," + fader + "," + value + "\n");
+                writer.append("" + time + "," + fader + "," + value + ","
+                        + username + "," + testNumb + "\n");
             }
 
             // cleans up after the writer
@@ -287,5 +293,10 @@ public class Data {
 
         // returns null if exited
         return null;
+    }
+
+    public void setTestInfo(String username, String testNum) {
+        this.user = username;
+        this.testNumber = testNum;
     }
 }
