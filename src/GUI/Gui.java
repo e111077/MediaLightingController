@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -15,6 +16,7 @@ import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -69,9 +71,12 @@ public class Gui extends JPanel implements Runnable {
     private final Group tab2row2;
     private final Group tab2vert1;
     private final Group tab2vert2;
+    
+    public final String defaultSave;
 
     public Gui() {
         super(new GridLayout(1, 1));// not too sure what this does...
+        defaultSave = saveFileChooser();
         JTabbedPane tabbedPane = new JTabbedPane();
 
         // -----------------------------1st
@@ -184,7 +189,7 @@ public class Gui extends JPanel implements Runnable {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GuiModel.export();
+                GuiModel.export(saveFileChooser());
             }
         });
 
@@ -299,7 +304,7 @@ public class Gui extends JPanel implements Runnable {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GuiModel.export();
+                GuiModel.export(saveFileChooser());
             }
         });
         // ///////////////////////////
@@ -342,6 +347,41 @@ public class Gui extends JPanel implements Runnable {
         // Display the window.
         frame.pack();
         frame.setVisible(true);
+    }
+    
+    /**
+     * This opens a JFileChooser to select the location of where to save the
+     * CSV. It also appends .csv to the filename if it is not already present.
+     * 
+     * @return the filepath in which we want to save the canvas image with
+     *         ".csv" appended to the end
+     */
+    private String saveFileChooser() {
+        // Creates the File Chooser
+        JFileChooser chooser = new JFileChooser();
+
+        // sets the default file name
+        chooser.setSelectedFile(new File("dataExport.csv"));
+
+        // Displays the chooser
+        int returnedInt = chooser.showSaveDialog(null);
+
+        // If a file is selected, return the string of the filepath
+        if (returnedInt == JFileChooser.APPROVE_OPTION) {
+            // finds the absolute path of the location
+            String path = chooser.getSelectedFile().getAbsolutePath();
+
+            // if it does not end with .csv, it sets it to end with .csv
+            if (!path.endsWith(".csv")) {
+                return path + ".csv";
+            }
+
+            // returns the path
+            return path;
+        }
+
+        // returns null if exited
+        return null;
     }
 
     @Override

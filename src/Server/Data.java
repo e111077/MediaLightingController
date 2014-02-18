@@ -33,6 +33,8 @@ public class Data {
 
     private String user = "";
     private String testNumber = "";
+    
+    private int counter = 0;
 
     public Data(Gui gui) {
         this.gui = gui;
@@ -66,6 +68,7 @@ public class Data {
         if (axes) {
             try {
                 clone = (ArrayList<Object[]>) axesData.clone();
+                exportCSV(gui.defaultSave, true, clone);
             } catch (Exception e) {
                 System.out.println("There was an error in cloning");
                 e.printStackTrace();
@@ -80,6 +83,7 @@ public class Data {
         } else {
             try {
                 clone = (ArrayList<Object[]>) faderData.clone();
+                exportCSV(gui.defaultSave, true, clone);
             } catch (Exception e) {
                 System.out.println("There was an error in cloning");
                 e.printStackTrace();
@@ -179,66 +183,97 @@ public class Data {
      * @throws IOException
      *             Throws due to an IOException from the FileWriter
      */
-    public void exportCSV() throws IOException {
-        // gets the save location
-        String fileLocation = saveFileChooser();
+    public void exportCSV(String fileLocation, boolean autoSave, ArrayList<Object[]> lastDataset ) throws IOException {
         // gets the prefix of the save location
         String fileLocationPrefix = fileLocation.substring(0,
                 fileLocation.length() - 4);
-
-        // iterates through the axes
-        for (int i = 0; i < previousAxes.size(); i++) {
-            // breaks if there are no previous axes
-            if (previousAxes.size() == 0)
-                break;
-
-            // opens a file writer and appends the word "axis" the number of the
-            // test and ".csv"
-            FileWriter writer = new FileWriter(fileLocationPrefix + "Axis" + i
-                    + ".csv");
-
-            // creates the column titles
-            writer.append("Time (seconds),X Coordinate,Y Coordinate,Test Subject,Test Number\n");
-
-            // gets the indexed axis
-            ArrayList<Object[]> previousAxis = previousAxes.get(i);
-
-            // iterates through each value in each test
-            for (int j = 1; j < previousAxis.size(); j++) {
-                // gets each attribute in the stored data
-                Float time = (Float) previousAxis.get(j)[0];
-                Float xAxis = (Float) previousAxis.get(j)[1];
-                Float yAxis = (Float) previousAxis.get(j)[2];
-                String username = (String) previousAxis.get(j)[3];
-                String testNumb = (String) previousAxis.get(j)[4];
-
-                // writes in csv format
-                writer.append("" + time + "," + xAxis + "," + yAxis + ","
-                        + username + "," + testNumb + "\n");
-            }
-
-            // cleans up after the writer
-            writer.flush();
-            writer.close();
-        }
-
-        // iterates through the axes
-        for (int i = 0; i < previousFader.size(); i++) {
-            // breaks if there are no previous faders
-            if (previousFader.size() == 0)
-                break;
-
-            // opens a file writer and appends the word "fader" the number of
+        
+        if (!autoSave) {
+	        // iterates through the axes
+	        for (int i = 0; i < previousAxes.size(); i++) {
+	            // breaks if there are no previous axes
+	            if (previousAxes.size() == 0)
+	                break;
+	
+	            // opens a file writer and appends the word "axis" the number of the
+	            // test and ".csv"
+	            FileWriter writer = new FileWriter(fileLocationPrefix + "Axis" + i
+	                    + ".csv");
+	
+	            // creates the column titles
+	            writer.append("Time (seconds),X Coordinate,Y Coordinate,Test Subject,Test Number\n");
+	
+	            // gets the indexed axis
+	            ArrayList<Object[]> previousAxis = previousAxes.get(i);
+	
+	            // iterates through each value in each test
+	            for (int j = 1; j < previousAxis.size(); j++) {
+	                // gets each attribute in the stored data
+	                Float time = (Float) previousAxis.get(j)[0];
+	                Float xAxis = (Float) previousAxis.get(j)[1];
+	                Float yAxis = (Float) previousAxis.get(j)[2];
+	                String username = (String) previousAxis.get(j)[3];
+	                String testNumb = (String) previousAxis.get(j)[4];
+	
+	                // writes in csv format
+	                writer.append("" + time + "," + xAxis + "," + yAxis + ","
+	                        + username + "," + testNumb + "\n");
+	            }
+	
+	            // cleans up after the writer
+	            writer.flush();
+	            writer.close();
+	        }
+	
+	        // iterates through the axes
+	        for (int i = 0; i < previousFader.size(); i++) {
+	            // breaks if there are no previous faders
+	            if (previousFader.size() == 0)
+	                break;
+	
+	            // opens a file writer and appends the word "fader" the number of
+	            // the
+	            // test and ".csv"
+	            FileWriter writer = new FileWriter(fileLocationPrefix + "Fader" + i
+	                    + ".csv");
+	
+	            // creates the column titles
+	            writer.append("Time (seconds),Fader,Value,Test Subject,Test Number\n");
+	
+	            // gets the indexed fader
+	            ArrayList<Object[]> previousAxis = previousFader.get(i);
+	
+	            // iterates through each value in each test
+	            for (int j = 1; j < previousAxis.size(); j++) {
+	                // gets each attribute in the stored data
+	                Float time = (Float) previousAxis.get(j)[0];
+	                Float fader = (Float) previousAxis.get(j)[1];
+	                Float value = (Float) previousAxis.get(j)[2];
+	                String username = (String) previousAxis.get(j)[3];
+	                String testNumb = (String) previousAxis.get(j)[4];
+	
+	                // writes in csv format
+	                writer.append("" + time + "," + fader + "," + value + ","
+	                        + username + "," + testNumb + "\n");
+	            }
+	
+	            // cleans up after the writer
+	            writer.flush();
+	            writer.close();
+	        }
+        } else {
+        	// opens a file writer and appends the word "fader" the number of
             // the
             // test and ".csv"
-            FileWriter writer = new FileWriter(fileLocationPrefix + "Fader" + i
+            FileWriter writer = new FileWriter(fileLocationPrefix + counter
                     + ".csv");
+            counter++;
 
             // creates the column titles
-            writer.append("Time (seconds),Fader,Value,Test Subject,Test Number\n");
+            writer.append("Time (seconds),Val1,Val2,Test Subject,Test Number\n");
 
             // gets the indexed fader
-            ArrayList<Object[]> previousAxis = previousFader.get(i);
+            ArrayList<Object[]> previousAxis = lastDataset;
 
             // iterates through each value in each test
             for (int j = 1; j < previousAxis.size(); j++) {
@@ -259,40 +294,9 @@ public class Data {
             writer.close();
         }
     }
-
-    /**
-     * This opens a JFileChooser to select the location of where to save the
-     * CSV. It also appends .csv to the filename if it is not already present.
-     * 
-     * @return the filepath in which we want to save the canvas image with
-     *         ".csv" appended to the end
-     */
-    private String saveFileChooser() {
-        // Creates the File Chooser
-        JFileChooser chooser = new JFileChooser();
-
-        // sets the default file name
-        chooser.setSelectedFile(new File("dataExport.csv"));
-
-        // Displays the chooser
-        int returnedInt = chooser.showSaveDialog(null);
-
-        // If a file is selected, return the string of the filepath
-        if (returnedInt == JFileChooser.APPROVE_OPTION) {
-            // finds the absolute path of the location
-            String path = chooser.getSelectedFile().getAbsolutePath();
-
-            // if it does not end with .csv, it sets it to end with .csv
-            if (!path.endsWith(".csv")) {
-                return path + ".csv";
-            }
-
-            // returns the path
-            return path;
-        }
-
-        // returns null if exited
-        return null;
+    
+    public void exportCSV(String fileLocation) throws IOException {
+    	exportCSV(fileLocation, false, null);
     }
 
     public void setTestInfo(String username, String testNum) {

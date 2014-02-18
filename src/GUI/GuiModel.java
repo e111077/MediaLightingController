@@ -82,10 +82,11 @@ public class GuiModel {
         }
     }
     
-    public static void export() {
+    public static void export(String fileLocation) {
         try {
-            database.exportCSV();
+            database.exportCSV(fileLocation);
         } catch (IOException e) {
+        	e.printStackTrace();
             JOptionPane.showMessageDialog(null,
                     "THERE WAS AN ERROR EXPORTING THE CSV");
         }
