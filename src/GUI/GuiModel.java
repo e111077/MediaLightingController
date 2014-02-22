@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import com.illposed.osc.OSCMessage;
@@ -152,16 +153,31 @@ public class GuiModel {
         }
     }
 
-    public static void export() {
+    /**
+     * Exports all stored test as many csvs
+     * 
+     * @param fileLocation Location where we will export files
+     */
+    public static void export(String fileLocation) {
         try {
-            database.exportCSV();
+            database.exportCSV(fileLocation);
         } catch (IOException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null,
                     "THERE WAS AN ERROR EXPORTING THE CSV");
         }
     }
 
-    // enables the buttons
+    /**
+     * Enables the buttons disabled by the submit button ont he gui on the given
+     * gui and tab
+     * 
+     * @param gui
+     *            Gui object we want to enable buttons on
+     * @param axes
+     *            true if this is the axes buttons we want to enable and false
+     *            if the faders
+     */
     public static void enableButtons(Gui gui, boolean axes) {
         if (axes) {
             gui.tab1button1.setEnabled(true);
