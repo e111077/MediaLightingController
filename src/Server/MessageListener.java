@@ -140,6 +140,8 @@ public class MessageListener implements OSCListener {
 
             // sends the message
             sender.send(msg);
+            
+            sender.close();
         } catch (SocketException e1) {
             // displays an error
             JOptionPane.showMessageDialog(null,
