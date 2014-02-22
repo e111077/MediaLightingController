@@ -91,18 +91,11 @@ public class Data {
 
         }
 
-        GuiModel.turnOffLED(axes);
+        GuiModel.toggleLED(axes, 0);
         GuiModel.enableButtons(this.gui, axes);
 
         // Resets the initTime
         initTime = null;
-
-        // TODO: REMOVE AFTER DEBUGGING IS FINISHED
-        // try {
-        // exportCSV();
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
     }
 
     /**
@@ -121,7 +114,8 @@ public class Data {
         float elapsedTime = firstCheck();
 
         // Adds the appropriate data into the axes ArrayList
-        axesData.add(new Object[] { elapsedTime, x, y, user, testNumber });
+        if (elapsedTime != 1000)
+            axesData.add(new Object[] { elapsedTime, x, y, user, testNumber });
 
         // adds to the row
         GuiModel.updateAxes(this.gui, elapsedTime, x, y);
@@ -146,8 +140,9 @@ public class Data {
         float elapsedTime = firstCheck();
 
         // Adds the appropriate data into the fader ArrayList
-        faderData.add(new Object[] { elapsedTime, faderNumber, faderValue,
-                user, testNumber });
+        if (elapsedTime != 1000)
+            faderData.add(new Object[] { elapsedTime, faderNumber, faderValue,
+                    user, testNumber });
 
         GuiModel.updateFader(this.gui, elapsedTime, faderNumber, faderValue);
     }

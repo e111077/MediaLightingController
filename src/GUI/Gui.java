@@ -28,6 +28,13 @@ import javax.swing.table.DefaultTableModel;
 
 import Server.Data;
 
+/**
+ * This is the main gui panel.
+ * 
+ * @author fcolon
+ * @author marquez
+ *
+ */
 public class Gui extends JPanel implements Runnable {
     public final JButton tab1button1;
     public final JButton tab1button2;
@@ -167,7 +174,7 @@ public class Gui extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 GuiModel.submitInfo(tab1text1.getText(), tab1text2.getText());
                 GuiModel.setIPAddress(tab1text3.getText());
-                GuiModel.turnOnLED(true);
+                GuiModel.toggleLED(true, 1);
                 tab1text1.setEnabled(false);
                 tab1text2.setEnabled(false);
                 tab1text3.setEnabled(false);
@@ -282,7 +289,7 @@ public class Gui extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 GuiModel.submitInfo(tab2text1.getText(), tab2text2.getText());
                 GuiModel.setIPAddress(tab2text3.getText());
-                GuiModel.turnOnLED(false);
+                GuiModel.toggleLED(false, 1);
                 tab2text1.setEnabled(false);
                 tab2text2.setEnabled(false);
                 tab2text3.setEnabled(false);
@@ -304,10 +311,10 @@ public class Gui extends JPanel implements Runnable {
         });
         // ///////////////////////////
 
-        tabbedPane.addTab("Tab 1", panel1);
+        tabbedPane.addTab("Axes Data", panel1);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        tabbedPane.addTab("Tab 2", panel2);
+        tabbedPane.addTab("Fader Data", panel2);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         // Add the tabbed pane to this panel.
@@ -346,7 +353,6 @@ public class Gui extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        // TODO Auto-generated method stub
         createAndShowGUI();
     }
 }
