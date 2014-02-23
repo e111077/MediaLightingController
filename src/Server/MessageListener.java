@@ -37,6 +37,8 @@ public class MessageListener implements OSCListener {
         this.database = database;
         this.serverIp = InetAddress.getByName("18.85.59.119");
         this.serverPort = 10002;
+        
+        sendMessage("/set_inactive", null);
     }
 
     /**
