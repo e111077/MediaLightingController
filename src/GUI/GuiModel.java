@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import com.illposed.osc.OSCMessage;

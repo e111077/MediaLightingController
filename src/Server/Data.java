@@ -1,11 +1,8 @@
 package Server;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.swing.JFileChooser;
 
 import GUI.Gui;
 import GUI.GuiModel;
@@ -56,6 +53,7 @@ public class Data {
      *            this value should be set to true if the data being recorded is
      *            coming from the axes. False if it is coming from the fader.
      */
+    @SuppressWarnings("unchecked")
     public void stop(boolean axes) {
         // Stops recording
         recording = false;

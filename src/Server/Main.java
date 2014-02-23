@@ -1,8 +1,6 @@
 package Server;
 
 import java.io.IOException;
-import java.net.InetAddress;
-
 import javax.swing.SwingUtilities;
 
 import GUI.Gui;

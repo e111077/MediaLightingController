@@ -3,17 +3,14 @@ package GUI;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -25,11 +22,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.GroupLayout.Group;
 import javax.swing.table.DefaultTableModel;
-
-import Server.Data;
 
 /**
  * This is the main gui panel.
@@ -39,6 +33,7 @@ import Server.Data;
  * 
  */
 public class Gui extends JPanel implements Runnable {
+    private static final long serialVersionUID = 94959604125849121L;
     public final JButton tab1button1;
     public final JButton tab1button2;
     public final JTextField tab1text1; // Test subject
