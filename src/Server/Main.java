@@ -31,6 +31,7 @@ public class Main {
         GuiModel.setDatabase(database);
         // Instantiates the listener which calls the database object
         MessageListener listener = new MessageListener(database);
+        GuiModel.setListener(listener);
 
         // Adds addresses from the mobile client to the listener
         receiver.addListener("/1/xy1", listener);

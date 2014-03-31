@@ -11,6 +11,7 @@ import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortOut;
 
 import Server.Data;
+import Server.MessageListener;
 
 /**
  * This is the main gui backend that is used to send data and commands between
@@ -22,6 +23,7 @@ import Server.Data;
 public class GuiModel {
     // static vars used in the class
     private static Data database;
+    private static MessageListener listener;
     private static InetAddress ip;
 
     /**
@@ -50,7 +52,7 @@ public class GuiModel {
      *            Y coordinate passed into the table
      */
     public static void updateAxes(Gui gui, Float time, Float x, Float y) {
-        gui.tableModel1.addRow(new Object[] { time, x, y });
+        gui.axesTableModel.addRow(new Object[] { time, x, y });
     }
 
     /**
@@ -67,7 +69,7 @@ public class GuiModel {
      *            Y coordinate passed into the table
      */
     public static void updateFader(Gui gui, Float time, Float bar, Float value) {
-        gui.tableModel2.addRow(new Object[] { time, bar, value });
+        gui.faderTableModel.addRow(new Object[] { time, bar, value });
     }
 
     /**
@@ -78,6 +80,10 @@ public class GuiModel {
      */
     public static void setDatabase(Data data) {
         database = data;
+    }
+    
+    public static void setListener(MessageListener listen) {
+    	listener = listen;
     }
 
     /**
@@ -168,7 +174,7 @@ public class GuiModel {
     }
 
     /**
-     * Enables the buttons disabled by the submit button ont he gui on the given
+     * Enables the buttons disabled by the submit button on the gui on the given
      * gui and tab
      * 
      * @param gui
@@ -179,17 +185,75 @@ public class GuiModel {
      */
     public static void enableButtons(Gui gui, boolean axes) {
         if (axes) {
-            gui.tab1button1.setEnabled(true);
-            gui.tab1button2.setEnabled(true);
-            gui.tab1text1.setEnabled(true);
-            gui.tab1text2.setEnabled(true);
-            gui.tab1text3.setEnabled(true);
+            gui.axesSubmitButton.setEnabled(true);
+            gui.axesExportButton.setEnabled(true);
+            gui.axesTestSubText.setEnabled(true);
+            gui.axesTestNumText.setEnabled(true);
+            gui.axesIPText.setEnabled(true);
         } else {
-            gui.tab2button1.setEnabled(true);
-            gui.tab2button2.setEnabled(true);
-            gui.tab2text1.setEnabled(true);
-            gui.tab2text2.setEnabled(true);
-            gui.tab2text3.setEnabled(true);
+            gui.faderSubmitButton.setEnabled(true);
+            gui.faderExportButton.setEnabled(true);
+            gui.faderTestSubText.setEnabled(true);
+            gui.faderTestNumText.setEnabled(true);
+            gui.faderIPText.setEnabled(true);
         }
+    }
+    
+    /**
+     * Stops collecting data from the user.
+     * 
+     * @param axes, to indicate axes or faders
+     */
+    public static void stopRecording(boolean axes){
+    	// creates the sender
+        OSCPortOut sender;
+
+        // tries to send a message and gives proper error message if needed
+        try {
+            // sets the sender to the phones ip at port 9000
+            sender = new OSCPortOut(ip, 9000);
+            // instantiates the data being sent to the phone
+            Object[] arg = new Object[1];
+            // assigns a value to the data being sent to the phone
+            arg[0] = new Integer(0);
+
+            // declares the OSC message
+            OSCMessage msg;
+
+            // assigns the OSC message
+            if (axes)
+                msg = new OSCMessage("/1/toggle1", arg);
+            else
+                msg = new OSCMessage("/2/toggle1", arg);
+
+            // sends the message to the phone
+            sender.send(msg);
+
+            // displays an error message for a socket error
+        } catch (SocketException e1) {
+            JOptionPane.showMessageDialog(null,
+                    "THERE WAS AN ERROR WITH THE OUTGOING PORT");
+
+            // displays an error message when sending a message to the phone
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null,
+                    "THERE WAS AN ERROR WITH SENDING THE LED MESSAGE");
+        }
+        
+    	database.stop(axes);
+    }
+    
+    /**
+     * Stops collecting data from the user AND resets the lights.
+     * 
+     * @param axes, to indicate axes or faders
+     */
+    public static void resetLights(boolean axes){
+    	stopRecording(axes);
+    	listener.sendMessage("/set_inactive", null);
+    }
+    
+    public static void enableLights(){
+    	listener.sendMessage("/set_active", null);
     }
 }

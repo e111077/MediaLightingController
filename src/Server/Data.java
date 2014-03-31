@@ -46,7 +46,7 @@ public class Data {
     }
 
     /**
-     * Stops storing stata into the arrays This also stores the data for
+     * Stops storing data into the arrays This also stores the data for
      * exporting and clears the current, live data.
      * 
      * @param axes

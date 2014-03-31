@@ -38,11 +38,11 @@ public class MessageListener implements OSCListener {
         this.serverIp = InetAddress.getByName("18.85.59.119");
         this.serverPort = 10002;
         
-        sendMessage("/set_inactive", null);
+        sendMessage("/set_inactive", null); //controls if we can actually do stuff in the room
     }
 
     /**
-     * This is ran every time the OSCport receives an OSCMessage and it stores
+     * This runs every time the OSCport receives an OSCMessage and it stores
      * data into the database given an address of "/1/xy1", "/2/multifader1/#",
      * "/1/toggle1", and "/2/toggle1"
      */
@@ -125,7 +125,7 @@ public class MessageListener implements OSCListener {
      *            form of a float array (one value for red, green, blue, and
      *            three values for rgb
      */
-    private void sendMessage(String identifier, Float[] values) {
+    public void sendMessage(String identifier, Float[] values) {
         // creates the sender
         OSCPortOut sender;
 

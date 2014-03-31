@@ -33,31 +33,34 @@ import javax.swing.table.DefaultTableModel;
  * 
  */
 public class Gui extends JPanel implements Runnable {
-    private static final long serialVersionUID = 94959604125849121L;
-    public final JButton tab1button1;
-    public final JButton tab1button2;
-    public final JTextField tab1text1; // Test subject
-    public final JTextField tab1text2; // Test number
-    public final JTextField tab1text3; // IP Address
+    public final JButton axesSubmitButton;
+    public final JButton axesExportButton;
+    public final JTextField axesTestSubText; // Test subject
+    public final JTextField axesTestNumText; // Test number
+    public final JTextField axesIPText; // IP Address
 
-    public final JButton tab2button1;
-    public final JButton tab2button2;
-    public final JTextField tab2text1; // Test subject
-    public final JTextField tab2text2; // Test number
-    public final JTextField tab2text3; // IP Address
+    public final JButton faderSubmitButton;
+    public final JButton faderExportButton;
+    public final JTextField faderTestSubText; // Test subject
+    public final JTextField faderTestNumText; // Test number
+    public final JTextField faderIPText; // IP Address
+    public final JButton faderStopRecording; //Stop recording data
+    public final JButton faderResetLights; //Reset Lights and Stop the user from controlling them
 
-    private final JLabel tab1label1; // Test subject
-    private final JLabel tab1label2; // Test number
-    private final JLabel tab1label3; // IP Address
+    private final JLabel axesTestSubLabel; // Test subject
+    private final JLabel axesTestNumLabel; // Test number
+    private final JLabel axesIPLabel; // IP Address
+    public final JButton axesStopRecording; //Stop recording data
+    public final JButton axesResetLights; //Reset Lights and Stop the user from controlling them
+    
+    private final JLabel faderTestSubLabel; // Test subject
+    private final JLabel faderTestNumLabel; // Test number
+    private final JLabel faderIPLabel; // IP Address
 
-    private final JLabel tab2label1; // Test subject
-    private final JLabel tab2label2; // Test number
-    private final JLabel tab2label3; // IP Address
-
-    public final DefaultTableModel tableModel1; // X,Y table
-    public final DefaultTableModel tableModel2; // Bar table
-    private final JTable dataTable1;
-    private final JTable dataTable2;
+    public final DefaultTableModel axesTableModel; // X,Y table
+    public final DefaultTableModel faderTableModel; // Bar table
+    private final JTable axesDataTable;
+    private final JTable faderDataTable;
 
     // The following are used for organizing the layout.
     private final Group horizontal1;
@@ -65,20 +68,24 @@ public class Gui extends JPanel implements Runnable {
     private final Group horizontal2;
     private final Group vertical2;
 
-    private final Group tab1row1;
-    private final Group tab1row2;
-    private final Group tab1vert1;
-    private final Group tab1vert2;
+    private final Group axesrow1;
+    private final Group axesrow2;
+    private final Group axesrow3;
+    private final Group axesvert1;
+    private final Group axesvert2;
+    private final Group axesvert3;
 
-    private final Group tab2row1;
-    private final Group tab2row2;
-    private final Group tab2vert1;
-    private final Group tab2vert2;
+    private final Group faderRow1;
+    private final Group faderRow2;
+    private final Group faderRow3;
+    private final Group faderVert1;
+    private final Group faderVert2;
+    private final Group faderVert3;
 
     public final String defaultSave;
 
     public Gui() {
-        super(new GridLayout(1, 1));// not too sure what this does...
+        super(new GridLayout(1, 1));
 
         // displays info
         JOptionPane.showMessageDialog(null, "Choose the Autosave location. "
@@ -98,30 +105,36 @@ public class Gui extends JPanel implements Runnable {
         // -----------------------------1st
         // Tab-----------------------------------
         // Instantiate components
-        tab1button1 = new JButton();
-        tab1button1.setName("tab1button1");
-        tab1button1.setText("Submit");
-        tab1label1 = new JLabel(); // Note: Labels are reused in second tab
-        tab1button2 = new JButton();
-        tab1button2.setName("tab1button2");
-        tab1button2.setText("Export All Tests");
-        tab1label1.setText("Test Subject: ");
-        tab1label2 = new JLabel();
-        tab1label2.setText("Test Number: ");
-        tab1label3 = new JLabel();
-        tab1label3.setText("IP Address: ");
-        tab1text1 = new JTextField(20); // Test subject
-        tab1text1.setName("text1");
-        tab1text2 = new JTextField(20); // Test number
-        tab1text2.setName("text2");
-        tab1text3 = new JTextField(20); // IP Address
-        tab1text3.setName("text2");
+        axesSubmitButton = new JButton();
+        axesSubmitButton.setName("axesSubmitButton");
+        axesSubmitButton.setText("Submit");
+        axesTestSubLabel = new JLabel(); // Note: Labels are reused in second tab
+        axesExportButton = new JButton();
+        axesExportButton.setName("axesExportButton");
+        axesExportButton.setText("Export All Tests");
+        axesTestSubLabel.setText("Test Subject: ");
+        axesTestNumLabel = new JLabel();
+        axesTestNumLabel.setText("Test Number: ");
+        axesIPLabel = new JLabel();
+        axesIPLabel.setText("IP Address: ");
+        axesTestSubText = new JTextField(20); // Test subject
+        axesTestSubText.setName("axesTestSubText");
+        axesTestNumText = new JTextField(20); // Test number
+        axesTestNumText.setName("axesTestNumText");
+        axesIPText = new JTextField(20); // IP Address
+        axesIPText.setName("axesIPText");
+        axesStopRecording = new JButton();
+        axesStopRecording.setName("axesStopRecording");
+        axesStopRecording.setText("Stop Recording");
+        axesResetLights = new JButton();
+        axesResetLights.setName("axesResetLights");
+        axesResetLights.setText("Reset Lights");
 
-        Vector<String> table1Columns = new Vector<String>();
-        table1Columns.add("Time");
-        table1Columns.add("X");
-        table1Columns.add("Y");
-        tableModel1 = new DefaultTableModel(table1Columns, 0) {
+        Vector<String> axesTableColumns = new Vector<String>();
+        axesTableColumns.add("Time");
+        axesTableColumns.add("X");
+        axesTableColumns.add("Y");
+        axesTableModel = new DefaultTableModel(axesTableColumns, 0) {
             private static final long serialVersionUID = 2045698881619435427L;
 
             @Override
@@ -131,111 +144,147 @@ public class Gui extends JPanel implements Runnable {
                 return false;
             }
         };
-        dataTable1 = new JTable(tableModel1);
-        final JScrollPane scrollTable1 = new JScrollPane(dataTable1);
-        dataTable1.setName("dataTable1");
+        axesDataTable = new JTable(axesTableModel);
+        final JScrollPane scrollTable1 = new JScrollPane(axesDataTable);
+        axesDataTable.setName("dataTable1");
 
         // Set up layout
-        JComponent panel1 = makeTextPanel("Panel #1");
+        JComponent panel1 = makeTextPanel("axesPanel");
         GroupLayout layout1 = new GroupLayout(panel1);
         panel1.setLayout(layout1);
         layout1.setAutoCreateGaps(true);
         layout1.setAutoCreateContainerGaps(true);
 
         // Arrange horizontal
-        tab1row1 = layout1.createSequentialGroup();
-        tab1row1.addComponent(tab1label1);
-        tab1row1.addComponent(tab1text1);
-        tab1row1.addComponent(tab1label2);
-        tab1row1.addComponent(tab1text2);
-        tab1row1.addComponent(tab1label3);
-        tab1row1.addComponent(tab1text3);
-        tab1row1.addComponent(tab1button1);
-        tab1row1.addComponent(tab1button2);
+        axesrow1 = layout1.createSequentialGroup();
+        axesrow1.addComponent(axesTestSubLabel);
+        axesrow1.addComponent(axesTestSubText);
+        axesrow1.addComponent(axesTestNumLabel);
+        axesrow1.addComponent(axesTestNumText);
+        axesrow1.addComponent(axesIPLabel);
+        axesrow1.addComponent(axesIPText);
+        axesrow1.addComponent(axesSubmitButton);
+        axesrow1.addComponent(axesExportButton);
 
-        tab1row2 = layout1.createSequentialGroup();
-        tab1row2.addComponent(scrollTable1);
+        axesrow2 = layout1.createSequentialGroup();
+        axesrow2.addComponent(axesStopRecording);
+        axesrow2.addComponent(axesResetLights);
+        
+        axesrow3 = layout1.createSequentialGroup();
+        axesrow3.addComponent(scrollTable1);
 
         horizontal1 = layout1.createParallelGroup();
-        horizontal1.addGroup(tab1row1);
-        horizontal1.addGroup(tab1row2);
+        horizontal1.addGroup(axesrow1);
+        horizontal1.addGroup(axesrow2);
+        horizontal1.addGroup(axesrow3);
         layout1.setHorizontalGroup(horizontal1);
 
         // Arrange vertical
-        tab1vert1 = layout1.createParallelGroup(BASELINE);
-        tab1vert1.addComponent(tab1label1);
-        tab1vert1.addComponent(tab1text1);
-        tab1vert1.addComponent(tab1label2);
-        tab1vert1.addComponent(tab1text2);
-        tab1vert1.addComponent(tab1label3);
-        tab1vert1.addComponent(tab1text3);
-        tab1vert1.addComponent(tab1button1);
-        tab1vert1.addComponent(tab1button2);
+        axesvert1 = layout1.createParallelGroup(BASELINE);
+        axesvert1.addComponent(axesTestSubLabel);
+        axesvert1.addComponent(axesTestSubText);
+        axesvert1.addComponent(axesTestNumLabel);
+        axesvert1.addComponent(axesTestNumText);
+        axesvert1.addComponent(axesIPLabel);
+        axesvert1.addComponent(axesIPText);
+        axesvert1.addComponent(axesSubmitButton);
+        axesvert1.addComponent(axesExportButton);
 
-        tab1vert2 = layout1.createParallelGroup(BASELINE);
-        tab1vert2.addComponent(scrollTable1);
+        axesvert2 = layout1.createParallelGroup(BASELINE);
+        axesvert2.addComponent(axesStopRecording);
+        axesvert2.addComponent(axesResetLights);
+        
+        axesvert3 = layout1.createParallelGroup(BASELINE);
+        axesvert3.addComponent(scrollTable1);
 
         vertical1 = layout1.createSequentialGroup();
-        vertical1.addGroup(tab1vert1);
-        vertical1.addGroup(tab1vert2);
+        vertical1.addGroup(axesvert1);
+        vertical1.addGroup(axesvert2);
+        vertical1.addGroup(axesvert3);
         layout1.setVerticalGroup(vertical1);
 
-        scrollTable1.setColumnHeaderView(dataTable1.getTableHeader());
+        scrollTable1.setColumnHeaderView(axesDataTable.getTableHeader());
 
-        tab1button1.addActionListener(new ActionListener() {
+        axesSubmitButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GuiModel.submitInfo(tab1text1.getText(), tab1text2.getText());
-                GuiModel.setIPAddress(tab1text3.getText());
+                GuiModel.submitInfo(axesTestSubText.getText(), axesTestNumText.getText());
+                GuiModel.setIPAddress(axesIPText.getText());
                 GuiModel.toggleLED(true, 1);
-                tab1text1.setEnabled(false);
-                tab1text2.setEnabled(false);
-                tab1text3.setEnabled(false);
-                tab1button1.setEnabled(false);
-                tab1button2.setEnabled(false);
+                axesTestSubText.setEnabled(false);
+                axesTestNumText.setEnabled(false);
+                axesIPText.setEnabled(false);
+                axesSubmitButton.setEnabled(false);
+                axesExportButton.setEnabled(false);
 
-                for (int i = tableModel1.getRowCount() - 1; i >= 0; i--) {
-                    tableModel1.removeRow(i);
+                for (int i = axesTableModel.getRowCount() - 1; i >= 0; i--) {
+                    axesTableModel.removeRow(i);
                 }
+                
+                GuiModel.enableLights();
             }
         });
 
-        tab1button2.addActionListener(new ActionListener() {
+        axesExportButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 GuiModel.export(saveFileChooser());
             }
         });
+        
+        axesStopRecording.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	GuiModel.toggleLED(true, 0);
+            	GuiModel.stopRecording(true);
+            }
+        });
+        
+        axesResetLights.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	GuiModel.toggleLED(true, 0);
+            	GuiModel.resetLights(true);
+            }
+        });
 
         // -----------------------------2nd
         // Tab-----------------------------------
         // instantiating components
-        tab2button1 = new JButton();
-        tab2button1.setName("tab2button1");
-        tab2button1.setText("Submit");
-        tab2label1 = new JLabel(); // Note: Labels are reused in second tab
-        tab2button2 = new JButton();
-        tab2button2.setName("tab2button2");
-        tab2button2.setText("Export All Tests");
-        tab2label1.setText("Test Subject: ");
-        tab2label2 = new JLabel();
-        tab2label2.setText("Test Number: ");
-        tab2label3 = new JLabel();
-        tab2label3.setText("IP Address: ");
-        tab2text1 = new JTextField(20); // Test subject
-        tab2text1.setName("text1");
-        tab2text2 = new JTextField(20); // Test number
-        tab2text2.setName("text2");
-        tab2text3 = new JTextField(20); // IP Address
-        tab2text3.setName("text2");
+        faderSubmitButton = new JButton();
+        faderSubmitButton.setName("tab2button1");
+        faderSubmitButton.setText("Submit");
+        faderTestSubLabel = new JLabel(); // Note: Labels are reused in second tab
+        faderExportButton = new JButton();
+        faderExportButton.setName("tab2button2");
+        faderExportButton.setText("Export All Tests");
+        faderTestSubLabel.setText("Test Subject: ");
+        faderTestNumLabel = new JLabel();
+        faderTestNumLabel.setText("Test Number: ");
+        faderIPLabel = new JLabel();
+        faderIPLabel.setText("IP Address: ");
+        faderTestSubText = new JTextField(20); // Test subject
+        faderTestSubText.setName("text1");
+        faderTestNumText = new JTextField(20); // Test number
+        faderTestNumText.setName("text2");
+        faderIPText = new JTextField(20); // IP Address
+        faderIPText.setName("text2");
+        faderStopRecording = new JButton();
+        faderStopRecording.setName("faderStopRecording");
+        faderStopRecording.setText("Stop Recording");
+        faderResetLights = new JButton();
+        faderResetLights.setName("faderResetLights");
+        faderResetLights.setText("Reset Lights");
 
         Vector<String> table2Columns = new Vector<String>();
         table2Columns.add("Time");
         table2Columns.add("Bar Number");
         table2Columns.add("Value");
-        tableModel2 = new DefaultTableModel(table2Columns, 0) {
+        faderTableModel = new DefaultTableModel(table2Columns, 0) {
             private static final long serialVersionUID = 2045698881619435427L;
 
             @Override
@@ -246,83 +295,112 @@ public class Gui extends JPanel implements Runnable {
             }
         };
 
-        dataTable2 = new JTable(tableModel2);
-        final JScrollPane scrollTable2 = new JScrollPane(dataTable2);
-        dataTable2.setName("dataTable2");
+        faderDataTable = new JTable(faderTableModel);
+        final JScrollPane scrollTable2 = new JScrollPane(faderDataTable);
+        faderDataTable.setName("dataTable2");
 
         // Set up layout
-        JComponent panel2 = makeTextPanel("Panel #2");
+        JComponent panel2 = makeTextPanel("faderPanel");
         GroupLayout layout2 = new GroupLayout(panel2);
         panel2.setLayout(layout2);
         layout2.setAutoCreateGaps(true);
         layout2.setAutoCreateContainerGaps(true);
 
         // Arrange horizontal
-        tab2row1 = layout2.createSequentialGroup();
-        tab2row1.addComponent(tab2label1);
-        tab2row1.addComponent(tab2text1);
-        tab2row1.addComponent(tab2label2);
-        tab2row1.addComponent(tab2text2);
-        tab2row1.addComponent(tab2label3);
-        tab2row1.addComponent(tab2text3);
-        tab2row1.addComponent(tab2button1);
-        tab2row1.addComponent(tab2button2);
+        faderRow1 = layout2.createSequentialGroup();
+        faderRow1.addComponent(faderTestSubLabel);
+        faderRow1.addComponent(faderTestSubText);
+        faderRow1.addComponent(faderTestNumLabel);
+        faderRow1.addComponent(faderTestNumText);
+        faderRow1.addComponent(faderIPLabel);
+        faderRow1.addComponent(faderIPText);
+        faderRow1.addComponent(faderSubmitButton);
+        faderRow1.addComponent(faderExportButton);
 
-        tab2row2 = layout2.createSequentialGroup();
-        tab2row2.addComponent(scrollTable2);
+        faderRow2 = layout2.createSequentialGroup();
+        faderRow2.addComponent(faderStopRecording);
+        faderRow2.addComponent(faderResetLights);
+        
+        faderRow3 = layout2.createSequentialGroup();
+        faderRow3.addComponent(scrollTable2);
 
         horizontal2 = layout2.createParallelGroup();
-        horizontal2.addGroup(tab2row1);
-        horizontal2.addGroup(tab2row2);
+        horizontal2.addGroup(faderRow1);
+        horizontal2.addGroup(faderRow2);
+        horizontal2.addGroup(faderRow3);
         layout2.setHorizontalGroup(horizontal2);
 
         // Arrange vertical
-        tab2vert1 = layout2.createParallelGroup(BASELINE);
-        tab2vert1.addComponent(tab2label1);
-        tab2vert1.addComponent(tab2text1);
-        tab2vert1.addComponent(tab2label2);
-        tab2vert1.addComponent(tab2text2);
-        tab2vert1.addComponent(tab2label3);
-        tab2vert1.addComponent(tab2text3);
-        tab2vert1.addComponent(tab2button1);
-        tab2vert1.addComponent(tab2button2);
+        faderVert1 = layout2.createParallelGroup(BASELINE);
+        faderVert1.addComponent(faderTestSubLabel);
+        faderVert1.addComponent(faderTestSubText);
+        faderVert1.addComponent(faderTestNumLabel);
+        faderVert1.addComponent(faderTestNumText);
+        faderVert1.addComponent(faderIPLabel);
+        faderVert1.addComponent(faderIPText);
+        faderVert1.addComponent(faderSubmitButton);
+        faderVert1.addComponent(faderExportButton);
 
-        tab2vert2 = layout2.createParallelGroup(BASELINE);
-        tab2vert2.addComponent(scrollTable2);
+        faderVert2 = layout2.createParallelGroup(BASELINE);
+        faderVert2.addComponent(faderStopRecording);
+        faderVert2.addComponent(faderResetLights);
+        
+        faderVert3 = layout2.createParallelGroup(BASELINE);
+        faderVert3.addComponent(scrollTable2);
 
         vertical2 = layout2.createSequentialGroup();
-        vertical2.addGroup(tab2vert1);
-        vertical2.addGroup(tab2vert2);
+        vertical2.addGroup(faderVert1);
+        vertical2.addGroup(faderVert2);
+        vertical2.addGroup(faderVert3);
         layout2.setVerticalGroup(vertical2);
 
-        scrollTable2.setColumnHeaderView(dataTable2.getTableHeader());
+        scrollTable2.setColumnHeaderView(faderDataTable.getTableHeader());
 
-        tab2button1.addActionListener(new ActionListener() {
+        faderSubmitButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GuiModel.submitInfo(tab2text1.getText(), tab2text2.getText());
-                GuiModel.setIPAddress(tab2text3.getText());
+                GuiModel.submitInfo(faderTestSubText.getText(), faderTestNumText.getText());
+                GuiModel.setIPAddress(faderIPText.getText());
                 GuiModel.toggleLED(false, 1);
-                tab2text1.setEnabled(false);
-                tab2text2.setEnabled(false);
-                tab2text3.setEnabled(false);
-                tab2button1.setEnabled(false);
-                tab2button2.setEnabled(false);
+                faderTestSubText.setEnabled(false);
+                faderTestNumText.setEnabled(false);
+                faderIPText.setEnabled(false);
+                faderSubmitButton.setEnabled(false);
+                faderExportButton.setEnabled(false);
 
-                for (int i = tableModel2.getRowCount() - 1; i >= 0; i--) {
-                    tableModel2.removeRow(i);
+                for (int i = faderTableModel.getRowCount() - 1; i >= 0; i--) {
+                    faderTableModel.removeRow(i);
                 }
             }
         });
 
-        tab2button2.addActionListener(new ActionListener() {
+        faderExportButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 GuiModel.export(saveFileChooser());
             }
         });
+        
+        faderStopRecording.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	GuiModel.toggleLED(true, 0);
+            	GuiModel.stopRecording(false);
+            }
+        });
+        
+        faderResetLights.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	GuiModel.toggleLED(true, 0);
+            	GuiModel.resetLights(false);
+            }
+        });
+        
         // ///////////////////////////
 
         tabbedPane.addTab("Axes Data", panel1);
