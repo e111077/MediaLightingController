@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Vector;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Group;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -22,7 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.GroupLayout.Group;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
  * @author marquez
  * 
  */
+@SuppressWarnings("serial")
 public class Gui extends JPanel implements Runnable {
     public final JButton axesSubmitButton;
     public final JButton axesExportButton;

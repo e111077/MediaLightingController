@@ -1,12 +1,16 @@
 package Server;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import GUI.Gui;
 import GUI.GuiModel;
 
-import com.illposed.osc.*;
+import com.illposed.osc.OSCPortIn;
 
 /**
  * This is the main execution class. This begins the listening threads and runs
@@ -17,48 +21,87 @@ import com.illposed.osc.*;
  */
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        // sets the port in which data is collected
-        int PORT = 5555;
+	public static void main(String[] args) throws IOException {
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
-        // creates and runs the gui
-        Gui gui = new Gui();
-        
-        // Instantiates the receiver on the specific port
-        OSCPortIn receiver = new OSCPortIn(PORT);
-        // Instantiates the database
-        Data database = new Data(gui);
-        GuiModel.setDatabase(database);
-        // Instantiates the listener which calls the database object
-        MessageListener listener = new MessageListener(database);
-        GuiModel.setListener(listener);
+	        public void run() {
+	            // Do what you want when the application is stopping
+	        	MessageListener listener;
+				try {
+					listener = new MessageListener(null);
+					listener.sendMessage("/set_inactive", null);
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+	    }));
+		// displays info
+		JOptionPane.showMessageDialog(null,
+				"Select the directory that includes "
+						+ "the coordinate and intensity CSVs.");
+		String path = directoryChooser();
+		// sets the port in which data is collected
+		int PORT = 5555;
 
-        // Adds addresses from the mobile client to the listener
-        receiver.addListener("/1/xy1", listener);
-        receiver.addListener("/2/multifader1/1", listener);
-        receiver.addListener("/2/multifader1/2", listener);
-        receiver.addListener("/2/multifader1/3", listener);
-        receiver.addListener("/2/multifader1/4", listener);
-        receiver.addListener("/1/toggle1", listener);
-        receiver.addListener("/2/toggle1", listener);
-        
-        // begins listening
-        receiver.startListening();
-        // creates a thread pointing to the receiver's runnable file
-        Thread listenThread = new Thread(receiver);
-        // starts the listening thread
-        listenThread.start();
-        
-        SwingUtilities.invokeLater(gui);
-        
-//        OSCPortOut sender = new OSCPortOut(InetAddress.getByName("18.189.19.208"), 9000);
-//        Object[] arg = new Object[1];
-//        arg[0] = new Integer(1);
-//        OSCMessage msg = new OSCMessage("/1/led1", arg);
-//        try {
-//            sender.send(msg);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-    }
+		// creates and runs the gui
+		Gui gui = new Gui();
+
+		// Instantiates the receiver on the specific port
+		OSCPortIn receiver = new OSCPortIn(PORT);
+		// Instantiates the database
+		Data database = new Data(gui, path);
+		GuiModel.setDatabase(database);
+		// Instantiates the listener which calls the database object
+		MessageListener listener = new MessageListener(database);
+		GuiModel.setListener(listener);
+
+		// Adds addresses from the mobile client to the listener
+		receiver.addListener("/1/xy1", listener);
+		receiver.addListener("/2/multifader1/1", listener);
+		receiver.addListener("/2/multifader1/2", listener);
+		receiver.addListener("/2/multifader1/3", listener);
+		receiver.addListener("/2/multifader1/4", listener);
+		receiver.addListener("/1/toggle1", listener);
+		receiver.addListener("/2/toggle1", listener);
+		receiver.addListener("/3/push1", listener);
+		receiver.addListener("/3/push2", listener);
+		receiver.addListener("/3/push3", listener);
+		receiver.addListener("/3/push4", listener);
+		receiver.addListener("/3/push5", listener);
+		receiver.addListener("/3/push6", listener);
+		receiver.addListener("/3/push7", listener);
+		receiver.addListener("/3/push8", listener);
+
+		// begins listening
+		receiver.startListening();
+		// creates a thread pointing to the receiver's runnable file
+		Thread listenThread = new Thread(receiver);
+		// starts the listening thread
+		listenThread.start();
+
+		SwingUtilities.invokeLater(gui);
+	}
+
+	private static String directoryChooser() {
+		// Creates the File Chooser
+		JFileChooser chooser = new JFileChooser();
+
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		// Displays the chooser
+		int returnedInt = chooser.showOpenDialog(null);
+
+		// If a file is selected, return the string of the filepath
+		if (returnedInt == JFileChooser.APPROVE_OPTION) {
+			// finds the absolute path of the location
+			String path = chooser.getSelectedFile().getAbsolutePath();
+
+			// returns the path
+			return path;
+		}
+
+		// returns null if exited
+		return null;
+	}
 }

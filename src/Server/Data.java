@@ -1,9 +1,12 @@
 package Server;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import DataType.Document;
 import GUI.Gui;
 import GUI.GuiModel;
 
@@ -15,6 +18,21 @@ import GUI.GuiModel;
  * 
  */
 public class Data {
+	// last input value. This is used when checking whether to send another
+	// value or not
+	private Float lastVal;
+	// documents representing the light intensity CSVs
+	private final Document x1;
+	private final Document y1;
+	private final Document zdb;
+	private final Document zdg;
+	private final Document zdr;
+	private final Document zwb;
+	private final Document zwg;
+	private final Document zwr;
+	
+	private final String path;
+		
     // Recording boolean
     private boolean recording = false;
     // Live data arrays from fader and axes
@@ -33,7 +51,18 @@ public class Data {
 
     public int counter = 0;
 
-    public Data(Gui gui) {
+    public Data(Gui gui, String path) {
+    	this.lastVal = null;
+		this.path = path;
+		this.x1 = readCSV("X", 'x');
+		this.y1 = readCSV("Y", 'y');
+		this.zdb = readCSV("ZD_B", 'z');
+		this.zdg = readCSV("ZD_G", 'z');
+		this.zdr = readCSV("ZD_R", 'z');
+		this.zwb = readCSV("ZW_B", 'z');
+		this.zwg = readCSV("ZW_G", 'z');
+		this.zwr = readCSV("ZW_R", 'z');
+		
         this.gui = gui;
     }
 
@@ -99,6 +128,96 @@ public class Data {
         // Resets the initTime
         initTime = null;
     }
+    
+    /**
+	 * Accessor method
+	 * 
+	 * @return returns the last value input into the filter
+	 */
+	public Float getLastVal() {
+		return this.lastVal;
+	}
+
+	/**
+	 * Calculates the filtered value, which is the value rounded off to 3
+	 * decimal places. Returns null if this resulting value is the same as the
+	 * last value. Otherwise, the value is returned as normal.
+	 * 
+	 * @param initVal
+	 *            value to be filtered
+	 * @param resolution
+	 *            must be a number 10^x where x is the order of magnitude of
+	 *            resolution
+	 * @param isX
+	 *            1 if you are filtering an x value. 0 if you are filtering a y
+	 *            value.
+	 * @return returns a value interpolated between the min and max X or Y
+	 *         values given statically. Returns null if a message should not be
+	 *         sent (value input more than once)
+	 */
+	public Float filterVal(Float initVal, float resolution) {
+		if (initVal == null) {
+			return null;
+		}
+
+		boolean shouldSend = false;
+
+		Float filteredVal = 0f;
+		filteredVal = initVal * resolution;
+
+		filteredVal = (float) Math.floor(filteredVal);
+
+		filteredVal = filteredVal / resolution;
+
+		shouldSend = shouldISendAMessage(filteredVal);
+
+		if (!shouldSend) {
+			filteredVal = null;
+		}
+
+		return filteredVal;
+	}
+
+	/**
+	 * Calculates the final light intensity to be output
+	 * 
+	 * @param x
+	 *            filtered x value
+	 * @param y
+	 *            filtered y value
+	 * @return interpolated light intensity from the z csv given
+	 */
+	public Float[] lightIntensity(Float x, Float y) {
+		Float xOut = x1.oneDimensionSearch(0, x, 0, x1.getNumCols() - 1);
+		Float yOut = y1.twoDimensionSearch(y, xOut);
+		
+		Float zWallR = zwr.zSearch(xOut, yOut);
+		Float zWallG = zwg.zSearch(xOut, yOut);
+		Float zWallB = zwb.zSearch(xOut, yOut);
+		Float zDownR = zdr.zSearch(xOut, yOut);
+		Float zDownG = zdg.zSearch(xOut, yOut);
+		Float zDownB = zdb.zSearch(xOut, yOut);
+		
+		Float[] output = {zWallR, zWallG, zWallB, zDownR, zDownG, zDownB};
+		return output;
+	}
+
+	/**
+	 * Checks whether a mesage should be sent to the OSC server based on the
+	 * last message received from the user
+	 * 
+	 * @param messageVal
+	 *            value of the user's message
+	 * @return returns true if a message should be sent to the osc server
+	 */
+	private boolean shouldISendAMessage(Float messageVal) {
+		if (this.lastVal != messageVal) {
+			this.lastVal = messageVal;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
     /**
      * Adds a point and appropriate data to the axes data array.
@@ -320,4 +439,84 @@ public class Data {
         this.user = username;
         this.testNumber = testNum;
     }
+    
+    /**
+	 * Reads the CSV given and returns it as a Document object
+	 * 
+	 * @param dataset
+	 *            this is the CSV file name. If the file is named "filename.csv"
+	 *            then dataset would be "filename" without the quotes.
+	 * @param axis
+	 *            this is a char representing the axis we are reading from. If
+	 *            we are reading from the x axis data then this would be 'x', if
+	 *            y then 'y', and if z then 'z'. No other values are permitted.
+	 * @return A document object that represents the CSV as data
+	 */
+	private Document readCSV(String dataset, char axis) {
+		try {
+			// count the number of lines
+			int numberOfLines = 0;
+			FileReader fr2 = new FileReader(this.path + dataset + ".csv");
+			BufferedReader br2 = new BufferedReader(fr2);
+			String counterRead = br2.readLine();
+
+			// loop that counts the lines
+			while (counterRead != null) {
+				counterRead = br2.readLine();
+				numberOfLines++;
+			}
+
+			// closes the reader
+			br2.close();
+			fr2.close();
+
+			// initializations for parsing the lines
+			FileReader fr = new FileReader(this.path + dataset + ".csv");
+			BufferedReader br = new BufferedReader(fr);
+			String stringRead = br.readLine();
+
+			// finds the horizontal dimension
+			int columns = stringRead.split(",").length;
+
+			// initilaizes the output array
+			Float[][] docInfo = new Float[numberOfLines][columns];
+
+			// counter for the lines
+			int lineCounter = 0;
+
+			// splits and parses every line and adds it to the float array
+			while (stringRead != null) {
+				String[] stringNums = stringRead.split(",");
+
+				Float[] values = new Float[stringNums.length];
+
+				for (int i = 0; i < stringNums.length; i++) {
+					String stringNum = stringNums[i];
+					Float number = 0f;
+
+					// if it is not a number set it to zero
+					if (!stringNum.equals("NaN")) {
+						number = Float.parseFloat(stringNum);
+					}
+
+					values[i] = number;
+				}
+				docInfo[lineCounter] = values;
+
+				// read the next line
+				stringRead = br.readLine();
+				lineCounter++;
+			}
+
+			// closes the reader
+			br.close();
+			fr.close();
+
+			// returns the output document
+			return new Document(docInfo, axis);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

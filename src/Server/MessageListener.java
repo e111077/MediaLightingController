@@ -34,11 +34,11 @@ public class MessageListener implements OSCListener {
      *             This is the ip error for the light osc server
      */
     public MessageListener(Data database) throws UnknownHostException {
-        this.database = database;
-        this.serverIp = InetAddress.getByName("18.85.59.119");
-        this.serverPort = 10002;
+    	this.database = database;
+		this.serverIp = InetAddress.getByName("lights.media.mit.edu");
+		this.serverPort = 10002;
         
-        sendMessage("/set_inactive", null); //controls if we can actually do stuff in the room
+        sendMessage("/set_active", null); //controls if we can actually do stuff in the room
     }
 
     /**
@@ -59,15 +59,60 @@ public class MessageListener implements OSCListener {
 
         // adds a point to the database
         if (address.equals("/1/xy1")) {
-            this.database.addPoint((Float) data[0], (Float) data[1]);
+        	// catch bugs and flashes and malformed packets
+			if (!((data.length >= 2) &&
+					(data[1] != null) &&
+					!((Float) data[1]).equals((Float) 1.611492E-10f) &&
+					(((Float) data[1]) <= 1f))) {
+				return;
+			}
+			
+			// filters the x and y to the correct axes
+			Float filteredX = this.database.filterVal((Float) data[0], 100000);
+			Float filteredY = this.database.filterVal((Float) data[1], 100000);
+			
+			// checks if a nessage should or not be sent
+			if (filteredX == null || filteredY == null) {
+				return;
+			}
+			
+            this.database.addPoint(filteredX, filteredY);
 
-            Float[] messageValues = { (Float) data[1], (Float) data[1],
-                    (Float) data[1] };
-            for (int i = 1; i < 21; i++) {
-                sendMessage("/sr" + i + "/rgb", messageValues);
-            }
+            // gets the light intensity
+ 			Float[] intensity = this.database
+ 					.lightIntensity(filteredX, filteredY);
+ 			
+ 			Float wallR = intensity[0];
+ 			Float wallG = intensity[1];
+ 			Float wallB = intensity[2];
+ 			Float downR = intensity[3];
+ 			Float downG = intensity[4];
+ 			Float downB = intensity[5];
+ 			
+ 			// sends the message to all 20 lights
+ 			Float[] messageValues =
+ 				  { wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					wallR, wallG, wallB,
+ 					downR, downG, downB,
+ 					downR, downG, downB,
+ 					downR, downG, downB,
+ 					downR, downG, downB,
+ 					downR, downG, downB,
+ 					downR, downG, downB,
+ 					downR, downG, downB,
+ 					downR, downG, downB };
+ 			sendMessage("/all", messageValues);
 
-            // adds the value to the database
         } else if (address.contains("/2/multifader1")) {
             // instantiates the fader number
             float faderNum = 0;
