@@ -96,7 +96,11 @@ public class Main {
 		if (returnedInt == JFileChooser.APPROVE_OPTION) {
 			// finds the absolute path of the location
 			String path = chooser.getSelectedFile().getAbsolutePath();
-
+			
+			if (path.charAt(path.length()-1) != '/') {
+				path = path + "/";
+			}
+			
 			// returns the path
 			return path;
 		}
