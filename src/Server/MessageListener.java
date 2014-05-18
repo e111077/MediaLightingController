@@ -63,13 +63,14 @@ public class MessageListener implements OSCListener {
 			if (!((data.length >= 2) &&
 					(data[1] != null) &&
 					!((Float) data[1]).equals((Float) 1.611492E-10f) &&
+					!((Float) data[1]).equals((Float) 7.1E-4f) &&
 					(((Float) data[1]) <= 1f))) {
 				return;
 			}
 			
 			// filters the x and y to the correct axes
-			Float filteredX = this.database.filterVal((Float) data[0], 100000);
-			Float filteredY = this.database.filterVal((Float) data[1], 100000);
+			Float filteredX = this.database.filterVal((Float) data[0], 100000, true);
+			Float filteredY = this.database.filterVal((Float) data[1], 100000, false);
 			
 			// checks if a nessage should or not be sent
 			if (filteredX == null || filteredY == null) {
