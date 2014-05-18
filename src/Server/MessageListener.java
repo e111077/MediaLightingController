@@ -62,9 +62,17 @@ public class MessageListener implements OSCListener {
         	// catch bugs and flashes and malformed packets
 			if (!((data.length >= 2) &&
 					(data[1] != null) &&
+					!((Float) data[1] < 0f) &&
+					!((Float) data[0] < 0f) &&
+					!((Float) data[1] > 1f) &&
+					!((Float) data[0] > 1f) &&
 					!((Float) data[1]).equals((Float) 1.611492E-10f) &&
 					!((Float) data[1]).equals((Float) 7.1E-4f) &&
-					(((Float) data[1]) <= 1f))) {
+					!((Float) data[0]).equals((Float) 2.5534332E-9f) &&
+					!((Float) data[1]).equals((Float) 2.5534332E-9f) &&
+					!((Float) data[1]).equals((Float) 1.862655E-9f) &&
+					!((Float) data[1]).equals((Float) 3.2741587E-12f) &&
+					!((Float) data[1]).equals((Float) 5.7072E-39f))) {
 				return;
 			}
 			
@@ -89,6 +97,10 @@ public class MessageListener implements OSCListener {
  			Float downR = intensity[3];
  			Float downG = intensity[4];
  			Float downB = intensity[5];
+// 			if (wallR <.1 || wallG < .1 || wallB < .1) {
+// 				System.out.println("x: " + data[0] + " y: " + data[1]);
+// 				System.out.println("x': " + filteredX + " y': " + filteredY);
+// 			}
  			
  			// sends the message to all 20 lights
  			Float[] messageValues =
