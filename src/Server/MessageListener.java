@@ -24,6 +24,12 @@ public class MessageListener implements OSCListener {
     private final Data database;
     private final InetAddress serverIp;
     private final int serverPort;
+    private final Float[] warmWall = {255f, 192f, 110f};
+    private final Float[] warmCent = {255f, 192f, 110f};
+    private final Float[] coolWall = {255f, 248f, 254f};
+    private final Float[] coolCent = {255f, 248f, 254f};
+    private Float[] currentWallTemp = warmWall;
+    private Float[] currentCentTemp = warmCent;
 
     /**
      * Constructs the object and uses the given database
@@ -37,7 +43,6 @@ public class MessageListener implements OSCListener {
     	this.database = database;
 		this.serverIp = InetAddress.getByName("lights.media.mit.edu");
 		this.serverPort = 10002;
-        
         sendMessage("/set_active", null); //controls if we can actually do stuff in the room
     }
 
@@ -104,23 +109,23 @@ public class MessageListener implements OSCListener {
  			
  			// sends the message to all 20 lights
  			Float[] messageValues =
- 				  { wallR, wallG, wallB,
+ 				  { wallR, wallG, wallB, // 1st
  					wallR, wallG, wallB,
+ 					wallR, wallG, wallB, // 2nd
  					wallR, wallG, wallB,
+ 					wallR, wallG, wallB, // 3rd
  					wallR, wallG, wallB,
+ 					wallR, wallG, wallB, // 4th
  					wallR, wallG, wallB,
+ 					wallR, wallG, wallB, // 5th
  					wallR, wallG, wallB,
+ 					wallR, wallG, wallB, // 6th
  					wallR, wallG, wallB,
- 					wallR, wallG, wallB,
- 					wallR, wallG, wallB,
- 					wallR, wallG, wallB,
- 					wallR, wallG, wallB,
- 					wallR, wallG, wallB,
+ 					downR, downG, downB, // 1st
  					downR, downG, downB,
  					downR, downG, downB,
  					downR, downG, downB,
- 					downR, downG, downB,
- 					downR, downG, downB,
+ 					downR, downG, downB, // 2nd
  					downR, downG, downB,
  					downR, downG, downB,
  					downR, downG, downB };
@@ -142,16 +147,146 @@ public class MessageListener implements OSCListener {
 
             // adds the value to the database
             this.database.addFaderDatum(faderNum, (Float) data[0]);
+            
+            this.database.storeFaderValue(faderNum, (Float) data[0]);
+            
+            Float[] currentSliders = this.database.getFaderValues();
+            
+            Float group1 = currentSliders[0];
+            Float group2 = currentSliders[1];
+            Float group3 = currentSliders[2];
+            Float group7 = currentSliders[3];
+            Float group8 = currentSliders[4];
+            Float group4 = currentSliders[5];
+            Float group5 = currentSliders[6];
+            Float group6 = currentSliders[7];
 
-            Float[] messageValues = { (Float) data[0], (Float) data[0],
-                    (Float) data[0] };
-            for (float i = (faderNum - 1) * 5 + 1; i < faderNum * 5 + 1; i++) {
-                String istr = i + "";
-                istr = istr.split("\\.")[0];
-                sendMessage("/sr" + istr + "/rgb", messageValues);
-            }
+            Float wallR = this.currentWallTemp[0];
+ 			Float wallG = this.currentWallTemp[1];
+ 			Float wallB = this.currentWallTemp[2];
+ 			Float downR = this.currentCentTemp[0];
+ 			Float downG = this.currentCentTemp[1];
+ 			Float downB = this.currentCentTemp[2];
+ 			
+ 			// sends the message to all 20 lights
+ 			Float[] messageValues =
+ 				  { wallR * group1, wallG * group1, wallB * group1, // 1st
+ 					wallR * group1, wallG * group1, wallB * group1,
+ 					wallR * group2, wallG * group2, wallB * group2, // 2nd
+ 					wallR * group2, wallG * group2, wallB * group2,
+ 					wallR * group3, wallG * group3, wallB * group3, // 3rd
+ 					wallR * group3, wallG * group3, wallB * group3,
+ 					wallR * group4, wallG * group4, wallB * group4, // 4th
+ 					wallR * group4, wallG * group4, wallB * group4,
+ 					wallR * group5, wallG * group5, wallB * group5, // 5th
+ 					wallR * group5, wallG * group5, wallB * group5,
+ 					wallR * group6, wallG * group6, wallB * group6, // 6th
+ 					wallR * group6, wallG * group6, wallB * group6,
+ 					downR * group7, downG * group7, downB * group7, // 1st
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group8, downG * group8, downB * group8, // 2nd
+ 					downR * group8, downG * group8, downB * group8,
+ 					downR * group8, downG * group8, downB * group8,
+ 					downR * group8, downG * group8, downB  * group8};
+ 			sendMessage("/all", messageValues);
 
             // starts / stops the database collection for the axes
+        } else if (address.equals("/2/warm")) {
+        	this.currentWallTemp = this.warmWall;
+        	this.currentCentTemp = this.warmCent;
+        	this.database.addFaderDatum(-1, 0f);
+        	
+Float[] currentSliders = this.database.getFaderValues();
+            
+            Float group1 = currentSliders[0];
+            Float group2 = currentSliders[1];
+            Float group3 = currentSliders[2];
+            Float group7 = currentSliders[3];
+            Float group8 = currentSliders[4];
+            Float group4 = currentSliders[5];
+            Float group5 = currentSliders[6];
+            Float group6 = currentSliders[7];
+
+            Float wallR = this.currentWallTemp[0];
+ 			Float wallG = this.currentWallTemp[1];
+ 			Float wallB = this.currentWallTemp[2];
+ 			Float downR = this.currentCentTemp[0];
+ 			Float downG = this.currentCentTemp[1];
+ 			Float downB = this.currentCentTemp[2];
+ 			
+ 			// sends the message to all 20 lights
+ 			Float[] messageValues =
+ 				  { wallR * group1, wallG * group1, wallB * group1, // 1st
+ 					wallR * group1, wallG * group1, wallB * group1,
+ 					wallR * group2, wallG * group2, wallB * group2, // 2nd
+ 					wallR * group2, wallG * group2, wallB * group2,
+ 					wallR * group3, wallG * group3, wallB * group3, // 3rd
+ 					wallR * group3, wallG * group3, wallB * group3,
+ 					wallR * group4, wallG * group4, wallB * group4, // 4th
+ 					wallR * group4, wallG * group4, wallB * group4,
+ 					wallR * group5, wallG * group5, wallB * group5, // 5th
+ 					wallR * group5, wallG * group5, wallB * group5,
+ 					wallR * group6, wallG * group6, wallB * group6, // 6th
+ 					wallR * group6, wallG * group6, wallB * group6,
+ 					downR * group7, downG * group7, downB * group7, // 1st
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group8, downG * group8, downB * group8, // 2nd
+ 					downR * group8, downG * group8, downB * group8,
+ 					downR * group8, downG * group8, downB * group8,
+ 					downR * group8, downG * group8, downB  * group8};
+ 			sendMessage("/all", messageValues);
+        	
+        } else if (address.equals("/2/cool")) {
+        	this.currentWallTemp = this.coolWall;
+        	this.currentCentTemp = this.coolCent;
+        	this.database.addFaderDatum(-2, 0f);
+        	
+Float[] currentSliders = this.database.getFaderValues();
+            
+            Float group1 = currentSliders[0];
+            Float group2 = currentSliders[1];
+            Float group3 = currentSliders[2];
+            Float group7 = currentSliders[3];
+            Float group8 = currentSliders[4];
+            Float group4 = currentSliders[5];
+            Float group5 = currentSliders[6];
+            Float group6 = currentSliders[7];
+
+            Float wallR = this.currentWallTemp[0];
+ 			Float wallG = this.currentWallTemp[1];
+ 			Float wallB = this.currentWallTemp[2];
+ 			Float downR = this.currentCentTemp[0];
+ 			Float downG = this.currentCentTemp[1];
+ 			Float downB = this.currentCentTemp[2];
+ 			
+ 			// sends the message to all 20 lights
+ 			Float[] messageValues =
+ 				  { wallR * group1, wallG * group1, wallB * group1, // 1st
+ 					wallR * group1, wallG * group1, wallB * group1,
+ 					wallR * group2, wallG * group2, wallB * group2, // 2nd
+ 					wallR * group2, wallG * group2, wallB * group2,
+ 					wallR * group3, wallG * group3, wallB * group3, // 3rd
+ 					wallR * group3, wallG * group3, wallB * group3,
+ 					wallR * group4, wallG * group4, wallB * group4, // 4th
+ 					wallR * group4, wallG * group4, wallB * group4,
+ 					wallR * group5, wallG * group5, wallB * group5, // 5th
+ 					wallR * group5, wallG * group5, wallB * group5,
+ 					wallR * group6, wallG * group6, wallB * group6, // 6th
+ 					wallR * group6, wallG * group6, wallB * group6,
+ 					downR * group7, downG * group7, downB * group7, // 1st
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group7, downG * group7, downB * group7,
+ 					downR * group8, downG * group8, downB * group8, // 2nd
+ 					downR * group8, downG * group8, downB * group8,
+ 					downR * group8, downG * group8, downB * group8,
+ 					downR * group8, downG * group8, downB  * group8};
+ 			sendMessage("/all", messageValues);
+        	
         } else if (address.equals("/1/toggle1")) {
             if ((Float) data[0] == 1f) {
                 this.database.start();

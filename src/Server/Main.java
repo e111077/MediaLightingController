@@ -62,8 +62,14 @@ public class Main {
 		receiver.addListener("/2/multifader1/2", listener);
 		receiver.addListener("/2/multifader1/3", listener);
 		receiver.addListener("/2/multifader1/4", listener);
+		receiver.addListener("/2/multifader1/5", listener);
+		receiver.addListener("/2/multifader1/6", listener);
+		receiver.addListener("/2/multifader1/7", listener);
+		receiver.addListener("/2/multifader1/8", listener);
 		receiver.addListener("/1/toggle1", listener);
 		receiver.addListener("/2/toggle1", listener);
+		receiver.addListener("/2/warm", listener);
+		receiver.addListener("/2/cool", listener);
 		receiver.addListener("/3/push1", listener);
 		receiver.addListener("/3/push2", listener);
 		receiver.addListener("/3/push3", listener);

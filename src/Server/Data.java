@@ -47,6 +47,8 @@ public class Data {
 	private Long initTime = null;
 	// Gui to be edited
 	private final Gui gui;
+	// Current Fader values
+	private Float[] faderVals = new Float[8];
 
 	private String user = "";
 	private String testNumber = "";
@@ -67,6 +69,9 @@ public class Data {
 		this.zwr = readCSV("ZW_R", 'z');
 
 		this.gui = gui;
+
+		for (int i = 0; i < faderVals.length; i++)
+			faderVals[i] = 0f;
 	}
 
 	/**
@@ -133,6 +138,28 @@ public class Data {
 	}
 
 	/**
+	 * Saves the value of the edited fader into the database
+	 * 
+	 * @param faderNum
+	 *            the number of the fader
+	 * @param value
+	 *            the new 0-1 value of the slider
+	 */
+	public void storeFaderValue(float faderNum, Float value) {
+		this.faderVals[(int) faderNum - 1] = value;
+	}
+
+	/**
+	 * Returns the saved values of the faders
+	 * 
+	 * @return Array of the saved fader values where index 0 = first slider and
+	 *         index 7 = 8th slider
+	 */
+	public Float[] getFaderValues() {
+		return this.faderVals;
+	}
+
+	/**
 	 * Calculates the filtered value, which is the value rounded off to 3
 	 * decimal places. Returns null if this resulting value is the same as the
 	 * last value. Otherwise, the value is returned as normal.
@@ -169,11 +196,11 @@ public class Data {
 
 		// checks if X has changed and y has changed. If not return null
 		shouldSend = shouldISendAMessage(filteredVal, isX);
-		
-//		if (!isX) {
-//			System.out.println("Send: " + shouldSend);
-//			System.out.println("X: " + this.sendX);
-//		}
+
+		// if (!isX) {
+		// System.out.println("Send: " + shouldSend);
+		// System.out.println("X: " + this.sendX);
+		// }
 		if (!shouldSend && !isX && !this.sendX) {
 			filteredVal = null;
 		}
@@ -278,15 +305,16 @@ public class Data {
 		float elapsedTime = firstCheck();
 
 		// Adds the appropriate data into the fader ArrayList
-		if (elapsedTime != 1000)
+		if (elapsedTime != 1000) {
 			faderData.add(new Object[] { elapsedTime, faderNumber, faderValue,
 					user, testNumber });
 
-		GuiModel.updateFader(this.gui, elapsedTime, faderNumber, faderValue);
+			GuiModel.updateFader(this.gui, elapsedTime, faderNumber, faderValue);
+		}
 	}
 
 	/**
-	 * Checks the initial time
+	 * Checks the initial time and the elapsed time
 	 * 
 	 * @return The elapsed time
 	 */
@@ -395,9 +423,21 @@ public class Data {
 					String username = (String) previousAxis.get(j)[3];
 					String testNumb = (String) previousAxis.get(j)[4];
 
-					// writes in csv format
-					writer.append("" + time + "," + fader + "," + value + ","
-							+ username + "," + testNumb + "\n");
+					if (fader.equals(new Float(-1))) {
+						// writes in csv format
+						writer.append("" + time + "," + "Warm Button" + "," + value
+								+ "," + username + "," + testNumb + "\n");
+
+					} else if (fader.equals(new Float(-2))) {
+						// writes in csv format
+						writer.append("" + time + "," + "Cool Button" + "," + value
+								+ "," + username + "," + testNumb + "\n");
+
+					} else {
+						// writes in csv format
+						writer.append("" + time + "," + fader + "," + value + ","
+								+ username + "," + testNumb + "\n");
+					}
 				}
 
 				// cleans up after the writer
@@ -429,9 +469,21 @@ public class Data {
 				String username = (String) previousAxis.get(j)[3];
 				String testNumb = (String) previousAxis.get(j)[4];
 
-				// writes in csv format
-				writer.append("" + time + "," + fader + "," + value + ","
-						+ username + "," + testNumb + "\n");
+				if (fader.equals(new Float(-1))) {
+					// writes in csv format
+					writer.append("" + time + "," + "Warm Button" + "," + value
+							+ "," + username + "," + testNumb + "\n");
+
+				} else if (fader.equals(new Float(-2))) {
+					// writes in csv format
+					writer.append("" + time + "," + "Cool Button" + "," + value
+							+ "," + username + "," + testNumb + "\n");
+
+				} else {
+					// writes in csv format
+					writer.append("" + time + "," + fader + "," + value + ","
+							+ username + "," + testNumb + "\n");
+				}
 			}
 
 			// cleans up after the writer
