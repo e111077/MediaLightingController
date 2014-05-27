@@ -170,26 +170,27 @@ public class MessageListener implements OSCListener {
  			
  			// sends the message to all 20 lights
  			Float[] messageValues =
- 				  { wallR * group1, wallG * group1, wallB * group1, // 1st
- 					wallR * group1, wallG * group1, wallB * group1,
- 					wallR * group2, wallG * group2, wallB * group2, // 2nd
- 					wallR * group2, wallG * group2, wallB * group2,
- 					wallR * group3, wallG * group3, wallB * group3, // 3rd
- 					wallR * group3, wallG * group3, wallB * group3,
- 					wallR * group4, wallG * group4, wallB * group4, // 4th
- 					wallR * group4, wallG * group4, wallB * group4,
- 					wallR * group5, wallG * group5, wallB * group5, // 5th
- 					wallR * group5, wallG * group5, wallB * group5,
- 					wallR * group6, wallG * group6, wallB * group6, // 6th
- 					wallR * group6, wallG * group6, wallB * group6,
- 					downR * group7, downG * group7, downB * group7, // 1st
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group8, downG * group8, downB * group8, // 2nd
- 					downR * group8, downG * group8, downB * group8,
- 					downR * group8, downG * group8, downB * group8,
- 					downR * group8, downG * group8, downB  * group8};
+				  { (wallR * group1) / 255f, (wallG * group1) / 255f, (wallB * group1) / 255f, // 1st
+					(wallR * group1) / 255f, (wallG * group1) / 255f, (wallB * group1) / 255f,
+					(wallR * group2) / 255f, (wallG * group2) / 255f, (wallB * group2) / 255f, // 2nd
+					(wallR * group2) / 255f, (wallG * group2) / 255f, (wallB * group2) / 255f,
+					(wallR * group3) / 255f, (wallG * group3) / 255f, (wallB * group3) / 255f, // 3rd
+					(wallR * group3) / 255f, (wallG * group3) / 255f, (wallB * group3) / 255f,
+					(wallR * group4) / 255f, (wallG * group4) / 255f, (wallB * group4) / 255f, // 4th
+					(wallR * group4) / 255f, (wallG * group4) / 255f, (wallB * group4) / 255f,
+					(wallR * group5) / 255f, (wallG * group5) / 255f, (wallB * group5) / 255f, // 5th
+					(wallR * group5) / 255f, (wallG * group5) / 255f, (wallB * group5) / 255f,
+					(wallR * group6) / 255f, (wallG * group6) / 255f, (wallB * group6) / 255f, // 6th
+					(wallR * group6) / 255f, (wallG * group6) / 255f, (wallB * group6) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f, // 1st
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f, // 2nd
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f};
+ 			
  			sendMessage("/all", messageValues);
 
             // starts / stops the database collection for the axes
@@ -198,7 +199,7 @@ public class MessageListener implements OSCListener {
         	this.currentCentTemp = this.warmCent;
         	this.database.addFaderDatum(-1, 0f);
         	
-Float[] currentSliders = this.database.getFaderValues();
+        	Float[] currentSliders = this.database.getFaderValues();
             
             Float group1 = currentSliders[0];
             Float group2 = currentSliders[1];
@@ -218,26 +219,26 @@ Float[] currentSliders = this.database.getFaderValues();
  			
  			// sends the message to all 20 lights
  			Float[] messageValues =
- 				  { wallR * group1, wallG * group1, wallB * group1, // 1st
- 					wallR * group1, wallG * group1, wallB * group1,
- 					wallR * group2, wallG * group2, wallB * group2, // 2nd
- 					wallR * group2, wallG * group2, wallB * group2,
- 					wallR * group3, wallG * group3, wallB * group3, // 3rd
- 					wallR * group3, wallG * group3, wallB * group3,
- 					wallR * group4, wallG * group4, wallB * group4, // 4th
- 					wallR * group4, wallG * group4, wallB * group4,
- 					wallR * group5, wallG * group5, wallB * group5, // 5th
- 					wallR * group5, wallG * group5, wallB * group5,
- 					wallR * group6, wallG * group6, wallB * group6, // 6th
- 					wallR * group6, wallG * group6, wallB * group6,
- 					downR * group7, downG * group7, downB * group7, // 1st
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group8, downG * group8, downB * group8, // 2nd
- 					downR * group8, downG * group8, downB * group8,
- 					downR * group8, downG * group8, downB * group8,
- 					downR * group8, downG * group8, downB  * group8};
+				  { (wallR * group1) / 255f, (wallG * group1) / 255f, (wallB * group1) / 255f, // 1st
+					(wallR * group1) / 255f, (wallG * group1) / 255f, (wallB * group1) / 255f,
+					(wallR * group2) / 255f, (wallG * group2) / 255f, (wallB * group2) / 255f, // 2nd
+					(wallR * group2) / 255f, (wallG * group2) / 255f, (wallB * group2) / 255f,
+					(wallR * group3) / 255f, (wallG * group3) / 255f, (wallB * group3) / 255f, // 3rd
+					(wallR * group3) / 255f, (wallG * group3) / 255f, (wallB * group3) / 255f,
+					(wallR * group4) / 255f, (wallG * group4) / 255f, (wallB * group4) / 255f, // 4th
+					(wallR * group4) / 255f, (wallG * group4) / 255f, (wallB * group4) / 255f,
+					(wallR * group5) / 255f, (wallG * group5) / 255f, (wallB * group5) / 255f, // 5th
+					(wallR * group5) / 255f, (wallG * group5) / 255f, (wallB * group5) / 255f,
+					(wallR * group6) / 255f, (wallG * group6) / 255f, (wallB * group6) / 255f, // 6th
+					(wallR * group6) / 255f, (wallG * group6) / 255f, (wallB * group6) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f, // 1st
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f, // 2nd
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f};
  			sendMessage("/all", messageValues);
         	
         } else if (address.equals("/2/cool")) {
@@ -245,7 +246,7 @@ Float[] currentSliders = this.database.getFaderValues();
         	this.currentCentTemp = this.coolCent;
         	this.database.addFaderDatum(-2, 0f);
         	
-Float[] currentSliders = this.database.getFaderValues();
+        	Float[] currentSliders = this.database.getFaderValues();
             
             Float group1 = currentSliders[0];
             Float group2 = currentSliders[1];
@@ -265,26 +266,26 @@ Float[] currentSliders = this.database.getFaderValues();
  			
  			// sends the message to all 20 lights
  			Float[] messageValues =
- 				  { wallR * group1, wallG * group1, wallB * group1, // 1st
- 					wallR * group1, wallG * group1, wallB * group1,
- 					wallR * group2, wallG * group2, wallB * group2, // 2nd
- 					wallR * group2, wallG * group2, wallB * group2,
- 					wallR * group3, wallG * group3, wallB * group3, // 3rd
- 					wallR * group3, wallG * group3, wallB * group3,
- 					wallR * group4, wallG * group4, wallB * group4, // 4th
- 					wallR * group4, wallG * group4, wallB * group4,
- 					wallR * group5, wallG * group5, wallB * group5, // 5th
- 					wallR * group5, wallG * group5, wallB * group5,
- 					wallR * group6, wallG * group6, wallB * group6, // 6th
- 					wallR * group6, wallG * group6, wallB * group6,
- 					downR * group7, downG * group7, downB * group7, // 1st
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group7, downG * group7, downB * group7,
- 					downR * group8, downG * group8, downB * group8, // 2nd
- 					downR * group8, downG * group8, downB * group8,
- 					downR * group8, downG * group8, downB * group8,
- 					downR * group8, downG * group8, downB  * group8};
+				  { (wallR * group1) / 255f, (wallG * group1) / 255f, (wallB * group1) / 255f, // 1st
+					(wallR * group1) / 255f, (wallG * group1) / 255f, (wallB * group1) / 255f,
+					(wallR * group2) / 255f, (wallG * group2) / 255f, (wallB * group2) / 255f, // 2nd
+					(wallR * group2) / 255f, (wallG * group2) / 255f, (wallB * group2) / 255f,
+					(wallR * group3) / 255f, (wallG * group3) / 255f, (wallB * group3) / 255f, // 3rd
+					(wallR * group3) / 255f, (wallG * group3) / 255f, (wallB * group3) / 255f,
+					(wallR * group4) / 255f, (wallG * group4) / 255f, (wallB * group4) / 255f, // 4th
+					(wallR * group4) / 255f, (wallG * group4) / 255f, (wallB * group4) / 255f,
+					(wallR * group5) / 255f, (wallG * group5) / 255f, (wallB * group5) / 255f, // 5th
+					(wallR * group5) / 255f, (wallG * group5) / 255f, (wallB * group5) / 255f,
+					(wallR * group6) / 255f, (wallG * group6) / 255f, (wallB * group6) / 255f, // 6th
+					(wallR * group6) / 255f, (wallG * group6) / 255f, (wallB * group6) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f, // 1st
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group7) / 255f, (downG * group7) / 255f, (downB * group7) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f, // 2nd
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f,
+					(downR * group8) / 255f, (downG * group8) / 255f, (downB * group8) / 255f};
  			sendMessage("/all", messageValues);
         	
         } else if (address.equals("/1/toggle1")) {
